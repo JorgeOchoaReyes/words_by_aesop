@@ -6,9 +6,20 @@ export default function Home() {
   const findPhonemes = api.rhymes.findPhonemes.useMutation(); 
   const [currentText, setCurrentText] = React.useState<string>(""); 
   const [phonoticParagraph, setPhonoticParagraph] = React.useState<Record<string, string>>({});
+  const [phonoticsCount, setPhonoticsCount] = React.useState<Record<string, number>>({});
   const [phonoticsAsMatchingColors, setPhonoticsAsMatchingColors] = React.useState<Record<string, string>>({} as Record<string, string>);
-  const cleanText = (text: string) => {
-    return text.replaceAll("\n", " ").replaceAll("\t", " ").replaceAll("  ", " ");
+  const cleanText = (text: string, skipLines=true, skipSpecialChars=true, skipDoubleSpaes=true) => {
+    let newText = text;
+    if(skipLines) {
+      newText = newText.replaceAll("\n", " ");
+    }
+    if(skipSpecialChars) {
+      newText = newText.replaceAll("\t", " ");
+    }
+    if(skipDoubleSpaes) {
+      newText = newText.replaceAll("  ", " ");
+    }
+    return newText;
   };
   const checkIfColorIsDark = (hex: string) => {
     const c = hex.substring(1);
@@ -19,6 +30,24 @@ export default function Home() {
     const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     return luma < 40;
   };  
+  const countOfPhonotics = (phonotics: Record<string, string>, text: string) => {
+    const counts = {} as Record<string, number>;
+    (text).replaceAll("\n"," <br/> ").split(" ").forEach((word) => { 
+      if(word === "<br />" || word === "<br/>" || word === " ") {
+        return;
+      }
+      const phonotics = phonoticParagraph[word];
+      const splitPhonotic = phonotics?.split(" ");
+      splitPhonotic?.forEach((phonotic) => {
+        if(!counts[phonotic]) {
+          counts[phonotic] = 0;
+        }
+        counts[phonotic] = counts[phonotic] + 1;
+      });
+    });  
+    return counts;
+  };
+  
   return (  
     <>
       <Head>
@@ -27,43 +56,67 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b bg-slate-300">
-        <h1 className="text-5xl font-bold mb-10">
+        <h1 className="text-5xl font-bold mb-20 mt-32">
           Words by Aesop
         </h1>
         <div className="container flex flex-col items-center justify-center h-full"> 
-          <textarea   
-            placeholder="Type here" 
-            className="textarea w-full max-w-xl mb-10"
-            value={currentText}
-            onChange={async (e) => {  
-              if(e.target.value.endsWith(" ") || e.target.value.endsWith("\n")) {
-                setCurrentText(cleanText(e.target.value));  
-                const res = await findPhonemes.mutateAsync({ text: cleanText(e.target.value) }); 
-                if(res.words) {
-                  Object.keys(res.words).forEach((word) => {
-                    const newPhonotic = (res.words[word] ?? ""); 
-                    const splitPhonotic = newPhonotic.split(" "); 
-                    splitPhonotic.forEach((phonotic) => {
-                      console.log(phonotic);
-                      if(!phonoticsAsMatchingColors[phonotic]) {  
-                        phonoticsAsMatchingColors[phonotic] = `#${Math.floor(Math.random()*16777215).toString(16)}`; 
-                      } 
+          <div className="flex flex-row w-full h-[40vh] justify-around">
+            <textarea   
+              placeholder="Type here" 
+              className="textarea w-[60%] mb-10 bg-white"
+              rows={10}
+              value={currentText}
+              onChange={async (e) => {  
+                if(e.target.value.endsWith(" ") || e.target.value.endsWith("\n")) {
+                  setCurrentText(cleanText(e.target.value, false, false, false));  
+                  const res = await findPhonemes.mutateAsync({ text: cleanText(e.target.value) }); 
+                  if(res.words) {
+                    Object.keys(res.words).forEach((word) => {
+                      const newPhonotic = (res.words[word] ?? ""); 
+                      const splitPhonotic = newPhonotic.split(" "); 
+                      splitPhonotic.forEach((phonotic) => { 
+                        if(!phonoticsAsMatchingColors[phonotic]) {  
+                          phonoticsAsMatchingColors[phonotic] = `#${Math.floor(Math.random()*16777215).toString(16)}`; 
+                        } 
+                      }); 
+                      const counts = countOfPhonotics(res.words, currentText);
+                      setPhonoticsCount(counts);
+                      setPhonoticsAsMatchingColors({
+                        ...phonoticsAsMatchingColors, 
+                      });
                     }); 
-                    setPhonoticsAsMatchingColors({
-                      ...phonoticsAsMatchingColors, 
-                    });
-                  }); 
-                  setPhonoticParagraph(res.words);
-                } 
-                return;
-              }  
+                    setPhonoticParagraph(res.words);
+                  } 
+                  return;
+                }  
               
-              setCurrentText(cleanText(e.target.value));  
-            }} 
-          />   
+                setCurrentText(cleanText(e.target.value, false, false, false));  
+              }} 
+            />   
+            <div className="w-fulls overflow-scroll"> 
+              <table className="table-auto w-[100%] mb-10 bg-white">
+                <thead>
+                  <tr> 
+                    <th className="px-4 py-2">Phonemes</th>
+                    <th className="px-4 py-2">Count</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.keys(phonoticsCount).sort((a, b) => (phonoticsCount?.[b] ?? 0) - (phonoticsCount?.[a] ?? 0)).map((word, index) => {
+                    return (
+                      <tr key={index}>
+                        <td className="border px-4 py-2">{word}</td>
+                        <td className="border px-4 py-2">{phonoticsCount[word]}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
           <button className="btn btn-success w-[25%] mb-10"
             onClick={async () => {
-              setCurrentText(cleanText(currentText));  
+              setCurrentText(cleanText(currentText, false, false, false));  
               const res = await findPhonemes.mutateAsync({ text: cleanText(currentText) }); 
               if(res.words) {
                 Object.keys(res.words).forEach((word) => {
@@ -77,36 +130,66 @@ export default function Home() {
                   setPhonoticsAsMatchingColors({
                     ...phonoticsAsMatchingColors, 
                   });
-                }); 
+                });  
+                const counts = countOfPhonotics(res.words, currentText);
+                setPhonoticsCount(counts);
                 setPhonoticParagraph(res.words);
               } 
             }}
           > 
             Check
           </button>
-          <div className="w-3/4 flex-col justify-center items-center">
-            {
-              findPhonemes.isPending ? <span className="loading loading-spinner loading-lg"></span> : null
-            } 
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "2fr 2fr 2fr 2fr 2fr 2fr 2fr 2fr",
+          <div className="w-3/4 flex-col justify-center items-center mb-96">
+
+            <div style={{ 
               width: "100%", 
               justifyContent: "start",
             }}> 
-              {
-                cleanText(currentText).split(" ").map((word, index) => {
+              {(() => {
+                const paragraphs = {} as Record<string, React.ReactNode[]>; 
+
+                let paragraphIndex = 0;
+
+                (currentText).replaceAll("\n"," <br/> ").split(" ").map((word, index) => {  
+                  if(word === "<br />" || word === "<br/>" || word === " ") {
+                    paragraphIndex++;
+                    if(!paragraphs[paragraphIndex]) {
+                      paragraphs[paragraphIndex] = [];
+                    }
+                    paragraphs[paragraphIndex]?.push(<br />);
+                    paragraphIndex++;
+                    return;
+                  }
                   const phonotics = phonoticParagraph[word];
                   const colorPhontics = phonotics?.split(" ").map((phonotic) => {
-                    const textWhite = checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? "") ? "text-white" : "text-white";
-                    return <span className={textWhite} key={phonotic} style={{backgroundColor: phonoticsAsMatchingColors[phonotic], marginLeft: 3}}>{phonotic}</span>;
+                    const ifTextCountIsOne = phonoticsCount[phonotic] === 1;
+                    const textWhite = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? "")) ? "text-white" : "text-white";
+                    return <span className={textWhite} key={phonotic} style={{
+                      backgroundColor: !ifTextCountIsOne ? phonoticsAsMatchingColors[phonotic]: "", 
+                      color: ifTextCountIsOne ? "black" : "white",
+                      marginLeft: 3
+                    }}>{phonotic}</span>;
                   }); 
 
-                  return <div key={index} className="flex flex-col mx-2">
-                    <div key={word} className="text-lg text-center">{word}  </div>   
-                    <div className="text-lg text-center ml-1"> {colorPhontics}</div>
-                  </div>;
-                })
+                  if(!paragraphs[paragraphIndex]) {
+                    paragraphs[paragraphIndex] = [];
+                  }
+                  paragraphs[paragraphIndex]?.push(
+                    <div key={index} className="flex flex-col mx-2">
+                      <div key={word} className="text-sm text-center">{word}  </div>   
+                      <div className="text-md text-center ml-1"> {colorPhontics}</div>
+                    </div>
+                  ); 
+                }).flat();
+
+                return Object.values(paragraphs).map((paragraph, index) => {
+                  return (
+                    <span key={index} className="flex flex-row justify-start items-start">
+                      {paragraph}
+                    </span>
+                  );
+                });
+              })() 
               }
             </div>
   

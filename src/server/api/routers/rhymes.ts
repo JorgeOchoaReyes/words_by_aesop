@@ -19,7 +19,10 @@ export const rhymesRouter = createTRPCRouter({
           allPhonemes[word] = "";
           continue;
         } 
-        allPhonemes[word] = (phonemes.replaceAll(/\d/g, "").replaceAll(/\s/g, " "));
+        allPhonemes[word] = (phonemes
+          // .replaceAll(/\d/g, "")
+          // .replaceAll(/\s/g, " ")
+        );
       }  
       return {
         words: allPhonemes,
