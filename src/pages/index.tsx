@@ -7,8 +7,9 @@ export default function Home() {
   const [currentText, setCurrentText] = React.useState<string>(""); 
   const [phonoticParagraph, setPhonoticParagraph] = React.useState<Record<string, string>>({});
   const [phonoticsCount, setPhonoticsCount] = React.useState<Record<string, number>>({});
+  const [uniqueWords, setUniqueWords] = React.useState<Record<string, number>>({});
   const [phonoticsAsMatchingColors, setPhonoticsAsMatchingColors] = React.useState<Record<string, string>>({} as Record<string, string>);
-  const cleanText = (text: string, skipLines=true, skipSpecialChars=true, skipDoubleSpaes=true) => {
+  const cleanText = (text: string, skipLines=true, skipSpecialChars=true, skipDoubleSpaes=true): string => {
     let newText = text;
     if(skipLines) {
       newText = newText.replaceAll("\n", " ");
@@ -21,7 +22,7 @@ export default function Home() {
     }
     return newText;
   };
-  const checkIfColorIsDark = (hex: string) => {
+  const checkIfColorIsDark = (hex: string): boolean => {
     const c = hex.substring(1);
     const rgb = parseInt(c, 16);
     const r = (rgb >> 16) & 0xff;
@@ -30,14 +31,14 @@ export default function Home() {
     const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     return luma < 40;
   };  
-  const countOfPhonotics = (phonotics: Record<string, string>, text: string) => {
+  const countOfPhonotics = (phonotics: Record<string, string>, text: string): Record<string, number> => {
     const counts = {} as Record<string, number>;
     (text).replaceAll("\n"," <br/> ").split(" ").forEach((word) => { 
       if(word === "<br />" || word === "<br/>" || word === " ") {
         return;
       }
-      const phonotics = phonoticParagraph[word];
-      const splitPhonotic = phonotics?.split(" ");
+      const phonoticsRecord = phonotics[word];
+      const splitPhonotic = phonoticsRecord?.split(" ");
       splitPhonotic?.forEach((phonotic) => {
         if(!counts[phonotic]) {
           counts[phonotic] = 0;
@@ -46,6 +47,17 @@ export default function Home() {
       });
     });  
     return counts;
+  };
+  const uniqueWordsCount = (text: string): Record<string, number> => {  
+    const words = text.split(" ").filter((word) => word.trim() !== ""); 
+    const wordsRecords = {} as Record<string, number>;
+    words.forEach((word) => {
+      if(!wordsRecords[word]) {
+        wordsRecords[word] = 0;
+      }
+      wordsRecords[word] = wordsRecords[word] + 1;
+    });
+    return wordsRecords;    
   };
   
   return (  
@@ -59,6 +71,8 @@ export default function Home() {
         <h1 className="text-5xl font-bold mb-20 mt-32">
           Words by Aesop
         </h1>
+        <h2 className="text-2xl mb-5 underline"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
+        
         <div className="container flex flex-col items-center justify-center h-full"> 
           <div className="flex flex-row w-full h-[40vh] justify-around">
             <textarea   
@@ -79,12 +93,14 @@ export default function Home() {
                           phonoticsAsMatchingColors[phonotic] = `#${Math.floor(Math.random()*16777215).toString(16)}`; 
                         } 
                       }); 
-                      const counts = countOfPhonotics(res.words, currentText);
-                      setPhonoticsCount(counts);
                       setPhonoticsAsMatchingColors({
                         ...phonoticsAsMatchingColors, 
                       });
                     }); 
+                    const wordCount = uniqueWordsCount(cleanText(e.target.value));
+                    setUniqueWords(wordCount);
+                    const counts = countOfPhonotics(res.words, cleanText(e.target.value) );
+                    setPhonoticsCount(counts);
                     setPhonoticParagraph(res.words);
                   } 
                   return;
@@ -93,25 +109,48 @@ export default function Home() {
                 setCurrentText(cleanText(e.target.value, false, false, false));  
               }} 
             />   
-            <div className="w-fulls overflow-scroll"> 
-              <table className="table-auto w-[100%] mb-10 bg-white">
-                <thead>
-                  <tr> 
-                    <th className="px-4 py-2">Phonemes</th>
-                    <th className="px-4 py-2">Count</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.keys(phonoticsCount).sort((a, b) => (phonoticsCount?.[b] ?? 0) - (phonoticsCount?.[a] ?? 0)).map((word, index) => {
-                    return (
-                      <tr key={index}>
-                        <td className="border px-4 py-2">{word}</td>
-                        <td className="border px-4 py-2">{phonoticsCount[word]}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            <div className="w-[40%] flex flex-row justify-around h-[30vh]"> 
+              
+              <div className="h-[40vh] w-[40%] overflow-scroll ">
+                <table className="table-auto w-[100%] mb-10 bg-white">
+                  <thead>
+                    <tr> 
+                      <th className="px-4 py-2">Phonemes</th>
+                      <th className="px-4 py-2">Count</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(phonoticsCount).sort((a, b) => (phonoticsCount?.[b] ?? 0) - (phonoticsCount?.[a] ?? 0)).map((word, index) => {
+                      return (
+                        <tr key={index}>
+                          <td className="border px-4 py-2">{word}</td>
+                          <td className="border px-4 py-2">{phonoticsCount[word]}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div className="h-[40vh] w-[40%] overflow-scroll ">
+                <table className="table-auto w-[100%] mb-10 bg-white">
+                  <thead>
+                    <tr> 
+                      <th className="px-4 py-2">Words</th>
+                      <th className="px-4 py-2">Count</th> 
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.keys(uniqueWords).sort((a, b) => (uniqueWords?.[b] ?? 0) - (uniqueWords?.[a] ?? 0)).map((word, index) => {
+                      return (
+                        <tr key={index}>
+                          <td className="border px-4 py-2">{word}</td>
+                          <td className="border px-4 py-2">{uniqueWords[word]}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
           <button className="btn btn-success w-[25%] mb-10"
@@ -131,6 +170,8 @@ export default function Home() {
                     ...phonoticsAsMatchingColors, 
                   });
                 });  
+                const wordCount = uniqueWordsCount(currentText);
+                setUniqueWords(wordCount);
                 const counts = countOfPhonotics(res.words, currentText);
                 setPhonoticsCount(counts);
                 setPhonoticParagraph(res.words);
@@ -139,11 +180,15 @@ export default function Home() {
           > 
             Check
           </button>
-          <div className="w-3/4 flex-col justify-center items-center mb-96">
+          <div className="w-[80%] flex-col justify-center items-center mb-96">
 
             <div style={{ 
               width: "100%", 
               justifyContent: "start",
+              backgroundColor: "#f7f7f7",
+              borderRadius: 10,
+              padding: 20,
+              overflowX: "auto"
             }}> 
               {(() => {
                 const paragraphs = {} as Record<string, React.ReactNode[]>; 
