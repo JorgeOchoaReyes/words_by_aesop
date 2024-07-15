@@ -13,7 +13,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <main data-theme="cupcake" className={GeistSans.className}>
+      <main data-theme="sunset" className={GeistSans.className}>
         <Component {...pageProps} />
       </main>
     </SessionProvider>

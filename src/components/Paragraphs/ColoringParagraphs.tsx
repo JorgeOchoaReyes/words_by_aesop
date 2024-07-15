@@ -15,14 +15,15 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
   checkIfColorIsDark,
 }) => {
   return (
-    <div style={{ 
-      width: "100%", 
-      justifyContent: "start",
-      backgroundColor: "#f7f7f7",
-      borderRadius: 10,
-      padding: 20,
-      overflowX: "auto"
-    }}> 
+    <div
+      className="bg-neutral"    
+      style={{ 
+        width: "100%", 
+        justifyContent: "start", 
+        borderRadius: 10,
+        padding: 20,
+        overflowX: "auto"
+      }}> 
       {(() => {
         const paragraphs = {} as Record<string, React.ReactNode[]>; 
 

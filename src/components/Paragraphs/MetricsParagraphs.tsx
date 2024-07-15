@@ -13,7 +13,7 @@ export const MetricsParagraphs: React.FC<MetricsParagraphsProps> = ({
   return (
     <>
       <div className="h-[40vh] w-[40%] overflow-scroll ">
-        <table className="table-auto w-[100%] mb-10 bg-white">
+        <table className="table-auto w-[100%] mb-10 bg-neutral">
           <thead>
             <tr> 
               <th className="px-4 py-2">Phonemes</th>
@@ -33,7 +33,7 @@ export const MetricsParagraphs: React.FC<MetricsParagraphsProps> = ({
         </table>
       </div>
       <div className="h-[40vh] w-[40%] overflow-scroll ">
-        <table className="table-auto w-[100%] mb-10 bg-white">
+        <table className="table-auto w-[100%] mb-10 bg-neutral">
           <thead>
             <tr> 
               <th className="px-4 py-2">Words</th>
