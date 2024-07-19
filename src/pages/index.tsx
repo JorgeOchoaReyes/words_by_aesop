@@ -6,9 +6,10 @@ import { useMetronome } from "~/hooks/useMetronome";
 import { useStore } from "~/hooks/useStore";
 import { api } from "~/utils/api";
 import { MetronmoeControl } from "~/components/Controls/Metronome";
+import { dictionary } from "cmu-pronouncing-dictionary";
+import { processPhonemes } from "~/utils/phonomes";
 
-export default function Home() { 
-  const findPhonemes = api.rhymes.findPhonemes.useMutation(); 
+export default function Home() {  
   const [currentText, setCurrentText] = React.useState<string>(""); 
   const [phonoticParagraph, setPhonoticParagraph] = React.useState<Record<string, string>>({});
   const [phonoticsCount, setPhonoticsCount] = React.useState<Record<string, number>>({});
@@ -71,7 +72,7 @@ export default function Home() {
     return wordsRecords;    
   };
   const processText = async (text: string) => {
-    const res = await findPhonemes.mutateAsync({ text: cleanText(text) }); 
+    const res = processPhonemes(text, dictionary); 
     if(res.words) {
       Object.keys(res.words).forEach((word) => {
         const newPhonotic = (res.words[word] ?? ""); 
