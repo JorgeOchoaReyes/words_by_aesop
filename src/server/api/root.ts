@@ -1,5 +1,6 @@
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 import { rhymesRouter } from "./routers/rhymes";
+import { geniusRouter } from "./routers/genius";
 
 /**
  * This is the primary router for your server.
@@ -8,6 +9,7 @@ import { rhymesRouter } from "./routers/rhymes";
  */
 export const appRouter = createTRPCRouter({
   rhymes: rhymesRouter,
+  geniusRouter: geniusRouter,
 });
 
 // export type definition of API

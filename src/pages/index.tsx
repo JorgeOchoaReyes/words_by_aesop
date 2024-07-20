@@ -8,6 +8,8 @@ import { api } from "~/utils/api";
 import { MetronmoeControl } from "~/components/Controls/Metronome";
 import { dictionary } from "cmu-pronouncing-dictionary";
 import { processPhonemes } from "~/utils/phonomes";
+import { GeniusLogo } from "~/components/Logos/Genius";
+import { SearchSongModal } from "~/components/Modal/SearchSongModal";
 
 export default function Home() {  
   const [currentText, setCurrentText] = React.useState<string>(""); 
@@ -19,7 +21,7 @@ export default function Home() {
   const audioRef2 = React.useRef<HTMLAudioElement>(null);
   const store = useStore();
   const storedParagraphs = useStore((state) => state.paragraphs);
-  const metronome = useMetronome(audioRef, audioRef2);
+  const metronome = useMetronome(audioRef, audioRef2); 
 
   const cleanText = (text: string, skipLines=true, skipSpecialChars=true, skipDoubleSpaes=true): string => {
     let newText = text;
@@ -116,7 +118,7 @@ export default function Home() {
       <audio src={"/metronome.mp3"} ref={audioRef} />  
       <audio src={"/metronome-85688.mp3"} ref={audioRef2} />  
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b ">
-        <h1 className="text-5xl font-bold mb-14 mt-20">
+        <h1 className="text-5xl font-bold mb-14 mt-14">
           Words by Aesop
         </h1>
         <div className="flex w-96">
@@ -153,15 +155,29 @@ export default function Home() {
                 uniqueWords={uniqueWords}
               />
             </div>
-          </div>
-          <button className="btn btn-secondary w-[25%] mb-10"
-            onClick={async () => {
-              setCurrentText(cleanText(currentText, false, false, false));  
-              await processText(cleanText(currentText, false, false, false));
-            }}
-          > 
+          </div> 
+          <div className="flex flex-row w-fit justify-center">
+            <button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-5 w-[100%] mb-10 text-black"
+              onClick={()=> {
+                const e = document.getElementById("genius_modal_1");
+                if(e) { 
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+                  (e as any)?.showModal();
+                }
+              }}
+            >
+              <GeniusLogo />
+              Find Lyrics 
+            </button>
+            <button className="btn btn-secondary mr-5 w-[100%] mb-10"
+              onClick={async () => {
+                setCurrentText(cleanText(currentText, false, false, false));  
+                await processText(cleanText(currentText, false, false, false));
+              }}
+            > 
             Check
-          </button>
+            </button>
+          </div>
           <div className="flex flex-row w-fit justify-center">
             <button className="btn btn-error mr-5 w-[100%] mb-10"
               onClick={async () => {
@@ -188,6 +204,7 @@ export default function Home() {
             />
           </div>
         </div>
+        <SearchSongModal />
       </main>
     </>
   );
