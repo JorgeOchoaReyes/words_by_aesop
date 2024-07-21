@@ -29,16 +29,12 @@ export const useMetronome = (
     }
     setCount((prevCount) => {
       if((prevCount+1) % beatsPerMeasure === 0) {
-        soundRef2.current?.play().then(() => {
-          console.log("___2");
-        }).catch((error) => {
+        soundRef2.current?.play().then().catch((error) => {
           console.log("Error playing sound: ", error);
         });
       }
       else {  
-        soundRef.current?.play().then(() => {
-          console.log("___1");
-        }).catch((error) => {
+        soundRef.current?.play().then().catch((error) => {
           console.log("Error playing sound: ", error);
         });
       }
