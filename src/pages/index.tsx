@@ -22,6 +22,7 @@ export default function Home() {
   const store = useStore();
   const storedParagraphs = useStore((state) => state.paragraphs);
   const metronome = useMetronome(audioRef, audioRef2); 
+  const h2Ref = React.useRef<HTMLHeadingElement | null>(null);
 
   const cleanText = (text: string, skipLines=true, skipSpecialChars=true, skipDoubleSpaes=true): string => {
     let newText = text;
@@ -133,7 +134,7 @@ export default function Home() {
           />
         </div>
         <div className="container flex flex-col items-center justify-center h-full"> 
-          <h2 className="text-2xl mb-5 underline self-start"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
+          <h2 ref={h2Ref} className="text-2xl mb-5 underline self-start"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
           <div className="flex flex-row w-full h-[40vh] justify-around">
             <textarea   
               placeholder="Type here" 
@@ -141,6 +142,11 @@ export default function Home() {
               rows={10}
               value={currentText}
               onChange={async (e) => {  
+                if(h2Ref) {
+                  // scroll text box to top of page 
+                  h2Ref.current?.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+                }
+
                 if(e.target.value.endsWith(" ") || e.target.value.endsWith("\n")) {
                   setCurrentText(cleanText(e.target.value, false, false, false));  
                   await processText(cleanText(e.target.value, false, false, false));
