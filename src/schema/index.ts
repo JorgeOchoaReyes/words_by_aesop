@@ -69,3 +69,18 @@ export interface PrimaryArtist2 {
     iq: number
   }
   
+export interface GeniusSongReference {
+    id: string,
+    name: string,
+    api_path: string,
+    image: string,
+  }
+
+export interface GeniusSong {
+    id: number,
+    name: string,
+    url: string,
+    image: string,
+    artist: string,
+    artist_image: string,
+  }

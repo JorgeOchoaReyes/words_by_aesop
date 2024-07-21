@@ -204,7 +204,10 @@ export default function Home() {
             />
           </div>
         </div>
-        <SearchSongModal />
+        <SearchSongModal setCurrentText={async (text: string) => {
+          setCurrentText(text);
+          await processText(text); 
+        }} />
       </main>
     </>
   );
