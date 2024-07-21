@@ -8,6 +8,8 @@ import posthog from "posthog-js";
 import React from "react";
 
 import "~/styles/globals.css";
+import { Footer } from "~/components/Footer/Footer";
+import { Navbar } from "~/components/Navbar/Navbar";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -26,7 +28,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <>  
       <SessionProvider session={session}>
         <main data-theme="sunset" className={GeistSans.className}>
+          <Navbar />
           <Component {...pageProps} />
+          <Footer />
           <Analytics />
         </main>
       </SessionProvider>
