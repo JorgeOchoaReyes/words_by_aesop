@@ -41,10 +41,10 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
           }
           const phonotics = phonoticParagraph[word];
           const colorPhontics = phonotics?.split(" ").map((phonotic) => {
-            const ifTextCountIsOne = phonoticsCount[phonotic] === 1;
-            const textWhite = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? "")) ? "text-black" : "text-black";
+            const ifTextCountIsOne = (phonoticsCount[phonotic] ?? 0) >= 2;
+            const textWhite = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? "")) ? "text-white" : "text-white";
             return <span className={textWhite} key={phonotic} style={{
-              backgroundColor: !ifTextCountIsOne ? phonoticsAsMatchingColors[phonotic]: "", 
+              backgroundColor: ifTextCountIsOne ? phonoticsAsMatchingColors[phonotic]: "", 
               color: ifTextCountIsOne ? "black" : "white",
               marginLeft: 3
             }}>{phonotic}</span>;
