@@ -11,8 +11,7 @@ export const SearchSongModal: React.FC<SearchSongModalProps> = ({ setCurrentText
   const searchGenius = api.geniusRouter.searchSongs.useMutation();
   const searchSong = api.geniusRouter.getSong.useMutation();
   const [songReferences, setSongReferences] = React.useState<GeniusSongReference[]>([]); 
-  const refTempElement = React.useRef<HTMLDivElement | null>(null);
-
+  const refTempElement = React.useRef<HTMLDivElement | null>(null); 
   const closeButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
   return (
@@ -21,21 +20,20 @@ export const SearchSongModal: React.FC<SearchSongModalProps> = ({ setCurrentText
         <div className="modal-box">
           <h3 className="font-bold text-lg">Search Popular Songs!</h3>
           <p className="py-4">Search for your favorite songs.</p>
-          <div className="modal-content">
-            <form method="dialog">
-              <input
-                type="text"
-                placeholder="Search for a song"
-                className="input input-bordered w-full max-w-xs mb-5"
-                value={text}
-                autoFocus
-                onChange={(e) => {
-                  setText(e.target.value);
-                }}
-              />
-            </form>
+          <div className="modal-content flex flex-col"> 
+            <input
+              type="text"
+              placeholder="Search for a song"
+              className="input input-bordered w-full max-w-xs mb-5"
+              value={text}
+              autoFocus
+              onMouseEnter={(e) => e.preventDefault()}
+              onChange={(e) => { 
+                setText(e.target.value);
+              }}
+            />  
             <button
-              className="btn btn-success"
+              className="btn btn-success w-full max-w-xs mb-5"
               onClick={async () => {
                 const res = await searchGenius.mutateAsync({ text });
                 if(res.songs) {
@@ -72,7 +70,7 @@ export const SearchSongModal: React.FC<SearchSongModalProps> = ({ setCurrentText
           <div className="modal-action">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
-              <button ref={closeButtonRef} className="btn">Close</button>
+              <button  ref={closeButtonRef} className="btn">Close</button>
             </form>
           </div>
         </div>

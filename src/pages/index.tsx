@@ -7,7 +7,7 @@ import { useStore } from "~/hooks/useStore";
 import { api } from "~/utils/api";
 import { MetronmoeControl } from "~/components/Controls/Metronome";
 import { dictionary } from "cmu-pronouncing-dictionary";
-import { processPhonemes } from "~/utils/phonomes";
+import { processPhonemes, findWordsThatRhyme } from "~/utils/phonomes";
 import { GeniusLogo } from "~/components/Logos/Genius";
 import { SearchSongModal } from "~/components/Modal/SearchSongModal";
 
@@ -23,6 +23,20 @@ export default function Home() {
   const storedParagraphs = useStore((state) => state.paragraphs);
   const metronome = useMetronome(audioRef, audioRef2); 
   const h2Ref = React.useRef<HTMLHeadingElement | null>(null);
+  const [rhymingWords, setRhymingWords] = React.useState<{
+    highlyRhyming: string[];
+    rhyming: string[];
+    somewhatRhyming: string[];
+  }>({
+    highlyRhyming: [],
+    rhyming: [],
+    somewhatRhyming: [],
+  });
+  const [showAllRhyming, setShowAllRhyming] = React.useState({
+    highlyRhyming: false,
+    rhyming: false,
+    somewhatRhyming: false,
+  });
 
   const cleanText = (text: string, skipLines=true, skipSpecialChars=true, skipDoubleSpaes=true): string => {
     let newText = text;
@@ -81,20 +95,41 @@ export default function Home() {
         const newPhonotic = (res.words[word] ?? ""); 
         const splitPhonotic = newPhonotic.split(" "); 
         splitPhonotic.forEach((phonotic) => {
-          if(!phonoticsAsMatchingColors[phonotic]) { 
-            phonoticsAsMatchingColors[phonotic] = `#${Math.floor(Math.random()*16777215).toString(16)}`;
-          } 
+          if(!phonoticsAsMatchingColors[phonotic]) {  
+            const makeValidColor = () => `#${Math.floor(Math.random()*16777215).toString(16)}`;
+            const ensureColorHasSixChars = (color: string) => {
+              console.log("Color: ", color.length);
+              if(color.length < 7) { 
+                const dif = 6 - color.length;
+                let newColor = color;
+                for(let i = 0; i <= dif; i++) {
+                  newColor = `${newColor}0`;
+                } 
+                return newColor;
+              }
+              return color;
+            };
+            phonoticsAsMatchingColors[phonotic] = `${ensureColorHasSixChars(makeValidColor())}`;
+          } else {
+            
+            return;
+          }
         });
         setPhonoticsAsMatchingColors({
           ...phonoticsAsMatchingColors, 
         });
-      });  
+      });   
       const wordCount = uniqueWordsCount(text);
       setUniqueWords(wordCount);
       const counts = countOfPhonotics(res.words, text);
       setPhonoticsCount(counts);
       setPhonoticParagraph(res.words);
     } 
+    const lastWord = text.split(" ").filter((a) => a.trim() !== "").pop();  
+    if(lastWord) {
+      const rhymes = findWordsThatRhyme(lastWord, dictionary);
+      setRhymingWords(rhymes); 
+    }
   };
 
   useEffect(() => {
@@ -135,7 +170,7 @@ export default function Home() {
         </div>
         <div className="container flex flex-col items-center justify-center h-full"> 
           <h2 ref={h2Ref} className="text-2xl mb-5 underline self-start"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
-          <div className="flex flex-row w-full h-[40vh] justify-around">
+          <div className="flex flex-row w-full h-[40vh] justify-around"> 
             <textarea   
               placeholder="Type here" 
               className="textarea w-[60%] mb-10 bg-neutral"
@@ -145,8 +180,7 @@ export default function Home() {
                 if(h2Ref) {
                   // scroll text box to top of page 
                   h2Ref.current?.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-                }
-
+                } 
                 if(e.target.value.endsWith(" ") || e.target.value.endsWith("\n")) {
                   setCurrentText(cleanText(e.target.value, false, false, false));  
                   await processText(cleanText(e.target.value, false, false, false));
@@ -154,14 +188,63 @@ export default function Home() {
                 }  
                 setCurrentText(cleanText(e.target.value, false, false, false));  
               }} 
-            />   
+            />    
             <div className="w-[40%] flex flex-row justify-around h-[30vh]">         
               <MetricsParagraphs 
                 phonoticsCount={phonoticsCount}
                 uniqueWords={uniqueWords}
               />
             </div>
-          </div> 
+          </div>  
+          <div className="w-[100%] flex-row justify-start items-start mb-5">
+            <div
+              className="bg-neutral"    
+              style={{ 
+                width: "50%", 
+                justifyContent: "start", 
+                borderRadius: 10,
+                padding: 20,
+                overflowY: "auto",
+                maxHeight: "20vh",
+              }}> 
+              {
+                Object.keys(rhymingWords).map((typeOfWords) => {
+                  const label = typeOfWords === "highlyRhyming" ? "Highly Rhyming" : typeOfWords === "somewhatRhyming" ? "Somewhat Rhyming" : "Rhyming";
+                  const bgColor = typeOfWords === "highlyRhyming" ? "bg-red-500" : typeOfWords === "somewhatRhyming" ? "bg-yellow-500" : "bg-green-500";
+                  return (
+                    <div key={typeOfWords} className="flex flex-col">
+                      <h2 className={`text-lg mb-5 font-bold mt-5 bg-[${bgColor}]`}> {label}: </h2>
+                      <span>
+                        {
+                          rhymingWords?.[typeOfWords as keyof typeof rhymingWords]?.map((word, index) => {
+                            if(index > 20 && !showAllRhyming[typeOfWords as keyof typeof showAllRhyming]) {
+                              return;
+                            }
+                            return (
+                              <a key={word} onClick={async () => {
+                                const newText = cleanText(`${currentText} ${word}`, false, false, false); 
+                                setCurrentText(cleanText(newText, false, false, false));  
+                                await processText(cleanText(newText, false, false, false));
+                              }} className="text-md mx-2 underline cursor-pointer"> {word}, </a>
+                            );
+                          })
+                        }
+                      </span>
+                      <a className="link mt-5 self-end" onClick={() => {
+                        setShowAllRhyming({
+                          ...showAllRhyming,
+                          [typeOfWords as keyof typeof showAllRhyming]: !showAllRhyming[typeOfWords as keyof typeof showAllRhyming],
+                        });
+                      }}>
+                        {showAllRhyming[typeOfWords as keyof typeof showAllRhyming] ? "Show Less" : "Show More"}
+                      </a>
+                    </div>
+                  );
+                })
+              }
+            </div>
+            
+          </div>
           <div className="flex flex-row w-fit justify-center">
             <button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-5 w-[100%] mb-10 text-black"
               onClick={()=> {
@@ -190,7 +273,7 @@ export default function Home() {
                 store.clearParagraphs();
               }}
             >
-            Clear Storage
+            Clear Progress
             </button>
             <button className="btn btn-success w-[100%] mb-10"
               onClick={async () => {
@@ -211,8 +294,8 @@ export default function Home() {
           </div>
         </div>
         <SearchSongModal setCurrentText={async (text: string) => {
-          setCurrentText(text);
-          await processText(text); 
+          setCurrentText(cleanText(text, false, false, false));  
+          await processText(cleanText(text, false, false, false));
         }} />
       </main>
     </>
