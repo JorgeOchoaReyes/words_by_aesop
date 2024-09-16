@@ -57,6 +57,7 @@ export const RecommendText: React.FC<{
                   initial={{ rotate: 0 }}
                   animate={{ rotate: showAllRhyming[typeOfWords as keyof typeof showAllRhyming] ? 180 : 0 }}
                   transition={{ duration: 0.5 }}
+                  className="cursor-pointer"
                 >
                   {showAllRhyming[typeOfWords as keyof typeof showAllRhyming] ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
                 </motion.div>

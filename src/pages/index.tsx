@@ -13,6 +13,7 @@ import { RecommendText } from "~/components/TextArea/RecommendText";
 import FancyMetronome from "~/components/Metronome";
 import { SaveAllIcon, WashingMachineIcon, XCircleIcon } from "lucide-react"; 
 import { useToast } from "~/hooks/use-toast";
+import { motion } from "framer-motion";
 
 export default function Home() {  
   const [currentText, setCurrentText] = React.useState<string>(""); 
@@ -178,16 +179,28 @@ export default function Home() {
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.ico" />
       </Head> 
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b "> 
-        <div className="flex w-full justify-around">
-          <h1 className="text-5xl font-bold mb-14 mt-14">
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b w-full">   
+        <div className="flex w-full justify-around mt-14">
+          <h1 className="text-5xl font-bold flex flex-row items-center">
+            <motion.img
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.1 }}
+              onClick={() => {
+                window.open("https://www.youtube.com/@aesoprockwins", "_blank");
+              }}
+              className="h-32 w-32 rounded-full mr-5 cursor-pointer" 
+              src="./None_shall_pass_aes_rock.jpg"
+            /> 
           Words by Aesop
           </h1>
           <FancyMetronome />
         </div>
-        <div className="container flex flex-col items-center justify-center h-full"> 
+        <div className="flex flex-col items-center h-full"> 
           <h2 ref={h2Ref} className="text-2xl mb-5 underline self-start"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
-          <div className="flex flex-row w-[100%] h-full justify-around"> 
+          <div className="flex flex-row w-[100%] justify-around"> 
             <AnimatedTextArea   
               placeholder="Type here"  
               rows={13}
@@ -205,7 +218,7 @@ export default function Home() {
                 setCurrentText(cleanText(e, false, false, false));  
               }} 
             />    
-            <div className="w-[70%] flex-col justify-center items-center mb-24">
+            <div className="w-[60%] flex-col justify-center items-center mb-24">
               <ColorPraragraphs 
                 currentText={currentText}
                 phonoticParagraph={phonoticParagraph}
@@ -215,7 +228,12 @@ export default function Home() {
               />
             </div>
           </div>   
-          <div className="flex flex-row w-fit justify-center">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            
+            transition={{ duration: 1 }} 
+            className="flex flex-row w-fit justify-center">
             <Button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-3 w-[100%] mb-10 text-black"
               onClick={()=> {
                 const e = document.getElementById("genius_modal_1");
@@ -271,7 +289,7 @@ export default function Home() {
               <SaveAllIcon size={24} color="black" style={{marginRight: "5"}} />
             Save Progress
             </Button>
-          </div>  
+          </motion.div>  
           <div className="w-full h-96 flex flex-row mb-5">
             <div style={{ 
               width: "100%",  

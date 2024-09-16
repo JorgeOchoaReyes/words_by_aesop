@@ -17,11 +17,11 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
 }) => {
   return (
     <motion.div   
-      initial={{ opacity: 0, height: 0 }}
-      animate={{ opacity: 1, height: "auto" }}
-      exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.3 }} 
-      className="bg-neutral shadow-lg rounded-lg p-5 min-h-[350px] w-full bg-secondary"    
+      // fade in and stretch animation
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }} 
+      className="bg-neutral shadow-lg rounded-lg p-5 min-h-[350px] max-h-[400px] w-full bg-secondary overflow-auto"    
       style={{ 
         width: "100%", 
         justifyContent: "start", 
