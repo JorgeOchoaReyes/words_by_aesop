@@ -1,4 +1,5 @@
 import React from "react"; 
+import { motion } from "framer-motion";
 
 interface ParagraphsColorProps {
     currentText: string;
@@ -15,8 +16,12 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
   checkIfColorIsDark,
 }) => {
   return (
-    <div
-      className="bg-neutral"    
+    <motion.div   
+      initial={{ opacity: 0, height: 0 }}
+      animate={{ opacity: 1, height: "auto" }}
+      exit={{ opacity: 0, height: 0 }}
+      transition={{ duration: 0.3 }} 
+      className="bg-neutral shadow-lg rounded-lg p-5 min-h-[350px] w-full bg-secondary"    
       style={{ 
         width: "100%", 
         justifyContent: "start", 
@@ -54,22 +59,46 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
             paragraphs[paragraphIndex] = [];
           }
           paragraphs[paragraphIndex]?.push(
-            <div key={index} className="flex flex-col mx-2">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              key={index} className="flex flex-col mx-2">
               <div key={word} className="text-sm text-center">{word}  </div>   
               <div className="text-md text-center ml-1"> {colorPhontics}</div>
-            </div>
+            </motion.div>
           ); 
         }).flat();
 
-        return Object.values(paragraphs).map((paragraph, index) => {
-          return (
-            <span key={index} className="flex flex-row justify-start items-start">
-              {paragraph}
-            </span>
-          );
-        });
+        const isEmpty = Object.values(paragraphs).every((paragraph) => paragraph.length === 0); 
+
+        // wave text animation
+        const animtedTextForNoText = <motion.div> 
+          <motion.span
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-row justify-start items-start">
+            {"No text to analyze"}
+          </motion.span>
+        </motion.div>;
+
+        return isEmpty ? 
+          animtedTextForNoText
+          :
+          Object.values(paragraphs).map((paragraph, index) => {
+            return (
+              <motion.span
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                key={index} className="flex flex-row justify-start items-start">
+                {paragraph}
+              </motion.span>
+            );
+          });
       })() 
       }
-    </div>
+    </motion.div>
   );
 };

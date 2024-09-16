@@ -6,10 +6,11 @@ import { Analytics } from "@vercel/analytics/react";
 import { api } from "~/utils/api"; 
 import posthog from "posthog-js";
 import React from "react";
+import { Toaster } from "~/components/ui/toaster";
+
 
 import "~/styles/globals.css";
-import { Footer } from "~/components/Footer/Footer";
-import { Navbar } from "~/components/Navbar/Navbar";
+import { Footer } from "~/components/Footer/Footer"; 
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -27,11 +28,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>  
       <SessionProvider session={session}>
-        <main data-theme="sunset" className={GeistSans.className}>
-          <Navbar />
+        <main data-theme="sunset" className={GeistSans.className}> 
           <Component {...pageProps} />
           <Footer />
           <Analytics />
+          <Toaster />
         </main>
       </SessionProvider>
     </>

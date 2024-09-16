@@ -1,28 +1,30 @@
 import Head from "next/head";
 import React, { useEffect } from "react";   
 import { MetricsParagraphs } from "~/components/Paragraphs/MetricsParagraphs";
-import { ColorPraragraphs } from "~/components/Paragraphs/ColoringParagraphs";
-import { useMetronome } from "~/hooks/useMetronome";
-import { useStore } from "~/hooks/useStore";
-import { api } from "~/utils/api";
-import { MetronmoeControl } from "~/components/Controls/Metronome";
+import { ColorPraragraphs } from "~/components/Paragraphs/ColoringParagraphs"; 
+import { useStore } from "~/hooks/useStore";  
 import { dictionary } from "cmu-pronouncing-dictionary";
 import { processPhonemes, findWordsThatRhyme } from "~/utils/phonomes";
 import { GeniusLogo } from "~/components/Logos/Genius";
-import { SearchSongModal } from "~/components/Modal/SearchSongModal";
+import { SearchSongModal } from "~/components/Modal/SearchSongModal";  
+import { AnimatedTextArea } from "~/components/TextArea/AnimatedTextArea";
+import { Button } from "~/components/ui/button";
+import { RecommendText } from "~/components/TextArea/RecommendText";
+import FancyMetronome from "~/components/Metronome";
+import { SaveAllIcon, WashingMachineIcon, XCircleIcon } from "lucide-react"; 
+import { useToast } from "~/hooks/use-toast";
 
 export default function Home() {  
   const [currentText, setCurrentText] = React.useState<string>(""); 
   const [phonoticParagraph, setPhonoticParagraph] = React.useState<Record<string, string>>({});
   const [phonoticsCount, setPhonoticsCount] = React.useState<Record<string, number>>({});
   const [uniqueWords, setUniqueWords] = React.useState<Record<string, number>>({});
-  const [phonoticsAsMatchingColors, setPhonoticsAsMatchingColors] = React.useState<Record<string, string>>({} as Record<string, string>);
-  const audioRef = React.useRef<HTMLAudioElement>(null);
-  const audioRef2 = React.useRef<HTMLAudioElement>(null);
+  const [phonoticsAsMatchingColors, setPhonoticsAsMatchingColors] = React.useState<Record<string, string>>({} as Record<string, string>); 
   const store = useStore();
-  const storedParagraphs = useStore((state) => state.paragraphs);
-  const metronome = useMetronome(audioRef, audioRef2); 
+  const storedParagraphs = useStore((state) => state.paragraphs); 
   const h2Ref = React.useRef<HTMLHeadingElement | null>(null);
+  const [loading, setLoading] = React.useState(false);
+  const {toast} = useToast();
   const [rhymingWords, setRhymingWords] = React.useState<{
     highlyRhyming: string[];
     rhyming: string[];
@@ -89,6 +91,7 @@ export default function Home() {
     return wordsRecords;    
   };
   const processText = async (text: string) => {
+    setLoading(true);
     const res = processPhonemes(text, dictionary); 
     if(res.words) {
       Object.keys(res.words).forEach((word) => {
@@ -130,6 +133,7 @@ export default function Home() {
       const rhymes = findWordsThatRhyme(lastWord, dictionary);
       setRhymingWords(rhymes); 
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -149,104 +153,70 @@ export default function Home() {
       <Head>
         <title>Words By Aesop</title>
         <meta name="description" content="Discover the ultimate text analysis tool! Our website offers precise word count, identifies unique words, provides pronunciation, and tracks vowel usage. Enhance your writing with our comprehensive text analysis services today!" />
+        <meta name="keywords" content="text analysis, word count, unique words, pronunciation, vowel usage" />
+        <meta name="author" content="Jorge Reyes" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        <meta property="og:title" content="Words By Aesop" />
+        <meta property="og:description" content="Discover the ultimate text analysis tool! Our website offers precise word count, identifies unique words, provides pronunciation, and tracks vowel usage. Enhance your writing with our comprehensive text analysis services today!" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://wordsbyaesop.com" />
+        <meta property="og:image" content="https://wordsbyaesop.com/og-image.png" />
+        <meta property="og:site_name" content="Words By Aesop" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Words By Aesop" />
+        <meta name="twitter:description" content="Discover the ultimate text analysis tool! Our website offers precise word count, identifies unique words, provides pronunciation, and tracks vowel usage. Enhance your writing with our comprehensive text analysis services today!" />
+        <meta name="twitter:image" content="https://wordsbyaesop.com/og-image.png" />
+        <meta name="twitter:site" content="@wordsbyaesop" />
+        <meta name="twitter:creator" content="@wordsbyaesop" />
+        <meta name="theme-color" content="#000000" />
+        <link rel="apple-touch-icon" href="/logo192.png" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="canonical" href="https://wordsbyaesop.com" />
+        <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <audio src={"/metronome.mp3"} ref={audioRef} />  
-      <audio src={"/metronome-85688.mp3"} ref={audioRef2} />  
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b ">
-        <h1 className="text-5xl font-bold mb-14 mt-14">
+      </Head> 
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b "> 
+        <div className="flex w-full justify-around">
+          <h1 className="text-5xl font-bold mb-14 mt-14">
           Words by Aesop
-        </h1>
-        <div className="flex w-96">
-          <MetronmoeControl 
-            startStop={metronome.startStop}
-            setBpm={metronome.setBpm}
-            bpm={metronome.bpm}
-            isPlaying={metronome.isPlaying}
-            count={metronome.count}
-            setBeatsPerMeasure={metronome.setBeatsPerMeasure}
-            beatsPerMeasure={metronome.beatsPerMeasure}
-          />
+          </h1>
+          <FancyMetronome />
         </div>
         <div className="container flex flex-col items-center justify-center h-full"> 
           <h2 ref={h2Ref} className="text-2xl mb-5 underline self-start"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
-          <div className="flex flex-row w-full h-[40vh] justify-around"> 
-            <textarea   
-              placeholder="Type here" 
-              className="textarea w-[60%] mb-10 bg-neutral"
-              rows={10}
-              value={currentText}
-              onChange={async (e) => {  
+          <div className="flex flex-row w-[100%] h-full justify-around"> 
+            <AnimatedTextArea   
+              placeholder="Type here"  
+              rows={13}
+              textValue={currentText}
+              setTextValue={async (e) => {  
                 if(h2Ref) {
                   // scroll text box to top of page 
                   h2Ref.current?.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
                 } 
-                if(e.target.value.endsWith(" ") || e.target.value.endsWith("\n")) {
-                  setCurrentText(cleanText(e.target.value, false, false, false));  
-                  await processText(cleanText(e.target.value, false, false, false));
+                if(e.endsWith(" ") || e.endsWith("\n")) {
+                  setCurrentText(cleanText(e, false, false, false));  
+                  await processText(cleanText(e, false, false, false));
                   return;
                 }  
-                setCurrentText(cleanText(e.target.value, false, false, false));  
+                setCurrentText(cleanText(e, false, false, false));  
               }} 
             />    
-            <div className="w-[40%] flex flex-row justify-around h-[30vh]">         
-              <MetricsParagraphs 
+            <div className="w-[70%] flex-col justify-center items-center mb-24">
+              <ColorPraragraphs 
+                currentText={currentText}
+                phonoticParagraph={phonoticParagraph}
                 phonoticsCount={phonoticsCount}
-                uniqueWords={uniqueWords}
+                phonoticsAsMatchingColors={phonoticsAsMatchingColors}
+                checkIfColorIsDark={checkIfColorIsDark}
               />
             </div>
-          </div>  
-          <div className="w-[100%] flex-row justify-start items-start mb-5">
-            <div
-              className="bg-neutral"    
-              style={{ 
-                width: "50%", 
-                justifyContent: "start", 
-                borderRadius: 10,
-                padding: 20,
-                overflowY: "auto",
-                maxHeight: "20vh",
-              }}> 
-              {
-                Object.keys(rhymingWords).map((typeOfWords) => {
-                  const label = typeOfWords === "highlyRhyming" ? "Highly Rhyming" : typeOfWords === "somewhatRhyming" ? "Somewhat Rhyming" : "Rhyming";
-                  const bgColor = typeOfWords === "highlyRhyming" ? "bg-red-500" : typeOfWords === "somewhatRhyming" ? "bg-yellow-500" : "bg-green-500";
-                  return (
-                    <div key={typeOfWords} className="flex flex-col">
-                      <h2 className={`text-lg mb-5 font-bold mt-5 bg-[${bgColor}]`}> {label}: </h2>
-                      <span>
-                        {
-                          rhymingWords?.[typeOfWords as keyof typeof rhymingWords]?.map((word, index) => {
-                            if(index > 20 && !showAllRhyming[typeOfWords as keyof typeof showAllRhyming]) {
-                              return;
-                            }
-                            return (
-                              <a key={word} onClick={async () => {
-                                const newText = cleanText(`${currentText} ${word}`, false, false, false); 
-                                setCurrentText(cleanText(newText, false, false, false));  
-                                await processText(cleanText(newText, false, false, false));
-                              }} className="text-md mx-2 underline cursor-pointer"> {word}, </a>
-                            );
-                          })
-                        }
-                      </span>
-                      <a className="link mt-5 self-end" onClick={() => {
-                        setShowAllRhyming({
-                          ...showAllRhyming,
-                          [typeOfWords as keyof typeof showAllRhyming]: !showAllRhyming[typeOfWords as keyof typeof showAllRhyming],
-                        });
-                      }}>
-                        {showAllRhyming[typeOfWords as keyof typeof showAllRhyming] ? "Show Less" : "Show More"}
-                      </a>
-                    </div>
-                  );
-                })
-              }
-            </div>
-            
-          </div>
+          </div>   
           <div className="flex flex-row w-fit justify-center">
-            <button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-5 w-[100%] mb-10 text-black"
+            <Button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-3 w-[100%] mb-10 text-black"
               onClick={()=> {
                 const e = document.getElementById("genius_modal_1");
                 if(e) { 
@@ -257,46 +227,86 @@ export default function Home() {
             >
               <GeniusLogo />
               Find Lyrics 
-            </button>
-            <button className="btn btn-secondary mr-5 w-[100%] mb-10"
-              onClick={async () => {
+            </Button>
+            <Button
+              className="btn bg-[#ff63a5] hover:bg-[#ff76b8] mr-3 w-[100%] mb-10 text-black" 
+              onClick={async () => { 
                 setCurrentText(cleanText(currentText, false, false, false));  
-                await processText(cleanText(currentText, false, false, false));
+                await processText(cleanText(currentText, false, false, false)); 
+                toast({  
+                  title: "Text Processed",
+                  description: "Text Processed Successfully",
+                  variant: "default",
+                });
               }}
-            > 
-            Check
-            </button>
-          </div>
-          <div className="flex flex-row w-fit justify-center">
-            <button className="btn btn-error mr-5 w-[100%] mb-10"
+            >
+              <WashingMachineIcon size={24} color="black" style={{marginRight: "5"}} />
+              { "Process Text"}
+            </Button>
+            <Button 
+              className="btn bg-[#ff6363] hover:bg-[#ff7676] mr-3 w-[100%] mb-10 text-white" 
               onClick={async () => {
+                toast({  
+                  description: "Progress Cleared",
+                  title: "Cleared",
+                  variant: "destructive",
+                }); 
                 store.clearParagraphs();
               }}
             >
+              <XCircleIcon size={24} color="white" style={{marginRight: "5"}} />
             Clear Progress
-            </button>
-            <button className="btn btn-success w-[100%] mb-10"
+            </Button>
+            <Button className="btn bg-[#63ff63] hover:bg-[#76ff76] mr-3 w-[100%] mb-10 text-black"
+            
               onClick={async () => {
                 store.saveParagraphs(currentText);
+                toast({  
+                  title: "Saved",
+                  description: "Progress Saved Successfully!",
+                  variant: "default",
+                });
               }}
             >
+              <SaveAllIcon size={24} color="black" style={{marginRight: "5"}} />
             Save Progress
-            </button>
-          </div>
-          <div className="w-[80%] flex-col justify-center items-center mb-96">
-            <ColorPraragraphs 
-              currentText={currentText}
-              phonoticParagraph={phonoticParagraph}
-              phonoticsCount={phonoticsCount}
-              phonoticsAsMatchingColors={phonoticsAsMatchingColors}
-              checkIfColorIsDark={checkIfColorIsDark}
-            />
+            </Button>
+          </div>  
+          <div className="w-full h-96 flex flex-row mb-5">
+            <div style={{ 
+              width: "100%",  
+              borderRadius: 10,  
+              display: "flex",
+              flexDirection: "column",  
+            }}> 
+              <RecommendText
+                rhymingWords={rhymingWords}
+                cleanText={cleanText}
+                currentText={currentText}
+                setCurrentText={setCurrentText}
+                processText={processText}
+                showAllRhyming={showAllRhyming}
+                setShowAllRhyming={setShowAllRhyming}
+              />
+            </div>
+            <div style={{ 
+              width: "70%",  
+              borderRadius: 10,  
+              display: "flex",  
+              justifyContent: "space-evenly",
+            }}>       
+              <MetricsParagraphs 
+                phonoticsCount={phonoticsCount}
+                uniqueWords={uniqueWords}
+              />
+            </div>
           </div>
         </div>
         <SearchSongModal setCurrentText={async (text: string) => {
           setCurrentText(cleanText(text, false, false, false));  
           await processText(cleanText(text, false, false, false));
         }} />
+
       </main>
     </>
   );
