@@ -16,8 +16,7 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
   checkIfColorIsDark,
 }) => {
   return (
-    <motion.div   
-      // fade in and stretch animation
+    <motion.div    
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }} 
@@ -45,27 +44,29 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
             return;
           }
           const phonotics = phonoticParagraph[word];
-          const colorPhontics = phonotics?.split(" ").map((phonotic) => {
-            const ifTextCountIsOne = (phonoticsCount[phonotic] ?? 0) >= 2;
+          console.log(phonoticParagraph, word,);
+          const colorPhontics = phonotics?.split(" ").map((phonotic) => { 
             const textWhite = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? "")) ? "text-white" : "text-white";
             return <span className={textWhite} key={phonotic} style={{
-              backgroundColor: ifTextCountIsOne ? phonoticsAsMatchingColors[phonotic]: "", 
-              color: ifTextCountIsOne ? "black" : "white",
-              marginLeft: 3
+              backgroundColor: phonoticsAsMatchingColors[phonotic], 
+              color: "black",
+              marginLeft: 3,
             }}>{phonotic}</span>;
           }); 
 
           if(!paragraphs[paragraphIndex]) {
             paragraphs[paragraphIndex] = [];
           }
+          const textWordSize = "text-[.8rem]";
+          const textPhonoticsSize = "text-[1rem]";
           paragraphs[paragraphIndex]?.push(
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               key={index} className="flex flex-col mx-2">
-              <div key={word} className="text-sm text-center">{word}  </div>   
-              <div className="text-md text-center ml-1"> {colorPhontics}</div>
+              <div key={word} className={`text-sm text-center ${textWordSize}`}>{word}  </div>   
+              <div className={`text-md ${textPhonoticsSize} text-center ml-1`}> {colorPhontics}</div>
             </motion.div>
           ); 
         }).flat();
