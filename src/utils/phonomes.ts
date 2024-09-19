@@ -2,15 +2,17 @@ export const processPhonemes = (text: string, dictionary: Record<string, string>
     words: Record<string, string>;
 } => {
   const allPhonemes = {} as Record<string, string>;
-  for(const word of text.trim().split(" ")) {
-    const phonemes = dictionary[word.toLowerCase()];
+  for(const word of text.trim().split(" ").join("\n").split("\n")) {
+    const cleanWord = word;
+    const phonemes = dictionary[cleanWord.toLowerCase()];
     if (!phonemes) {
-      console.log(`No phonemes found for word: ${word}`);
-      allPhonemes[word] = "";
+      console.log(`No phonemes found for word: ${cleanWord}`);
+      allPhonemes[cleanWord] = "";
       continue;
     } 
-    allPhonemes[word] = (phonemes);
+    allPhonemes[cleanWord] = (phonemes);
   }  
+  console.log("allPhonemes", allPhonemes);
   return {
     words: allPhonemes,
   };

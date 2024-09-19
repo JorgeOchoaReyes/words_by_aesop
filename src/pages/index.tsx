@@ -115,7 +115,6 @@ export default function Home() {
             };
             phonoticsAsMatchingColors[phonotic] = `${ensureColorHasSixChars(makeValidColor())}`;
           } else {
-            
             return;
           }
         });
@@ -218,7 +217,7 @@ export default function Home() {
                 setCurrentText(cleanText(e, false, false, false));  
               }} 
             />    
-            <div className="w-[40vw] flex-col justify-center items-center mb-10">
+            <div className="w-[50vw] flex-col justify-center items-center mb-10">
               <ColorPraragraphs 
                 currentText={currentText}
                 phonoticParagraph={phonoticParagraph}

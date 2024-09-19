@@ -13,17 +13,23 @@ export const MetricsParagraphs: React.FC<MetricsParagraphsProps> = ({
 }) => {
 
   const phonomesCount = Object.keys(phonoticsCount).sort((a, b) => (phonoticsCount?.[b] ?? 0) - (phonoticsCount?.[a] ?? 0)).map((word) => {
+    if(!word || word.trim() === "")  {
+      return false;
+    }
     return {
       Phonemes: word ?? "",
       Count: phonoticsCount[word] ?? 1,
     };
-  });
+  }).filter(Boolean);
   const uniqueWordsCount = Object.keys(uniqueWords).sort((a, b) => (uniqueWords?.[b] ?? 0) - (uniqueWords?.[a] ?? 0)).map((word) => {
+    if(!word || word.trim() === "")  {
+      return false;
+    }
     return {
       Words: word ?? "",
       Count: uniqueWords[word] ?? 1,
     };
-  }); 
+  }).filter(Boolean); 
 
   return (
     <> 

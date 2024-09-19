@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */  
@@ -11,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { object } from "zod";
 
 export const SlickTable: React.FC<{
     data?: any[];
@@ -71,22 +73,24 @@ export const SlickTable: React.FC<{
                   <TableBody>
                     {([ 
                       ...data ?? [],
-                    ])?.map((item, index) => (
-                      <motion.tr
-                        key={index + "table-row"}
-                        custom={index}
-                        variants={rowVariants}
-                        initial="hidden"
-                        animate="visible"
-                      >
-                        {
-                          Object.keys(item ?? {}).map((key) => (
-                          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                            <TableCell key={key}>{item?.[key as keyof typeof item]}</TableCell>
-                          ))
-                        }
-                      </motion.tr>
-                    ))}
+                    ]) 
+                      ?.map((item, index) => (
+                        <motion.tr
+                          key={index + "table-row"}
+                          custom={index}
+                          variants={rowVariants}
+                          initial="hidden"
+                          animate="visible"
+                        >
+                          {
+                            Object.keys(item ?? {}) 
+                              .map((key) => (
+                              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                                <TableCell key={key}>{item?.[key as keyof typeof item]}</TableCell>
+                              ))
+                          }
+                        </motion.tr>
+                      ))}
                   </TableBody>
                 </Table>
               </div>

@@ -107,6 +107,13 @@ export const geniusRouter = createTRPCRouter({
               .filter((line) => !line.includes("Embed"))
               .filter((line) => !line.includes("Lyrics"))
               .filter((line) => !line.includes("[Verse"))  
+              .filter((line) => !line.includes("[Chorus"))
+              .filter((line) => !line.includes("[Pre-Chorus"))
+              .filter((line) => !line.includes("[Bridge"))
+              .filter((line) => !line.includes("[Outro"))
+              .filter((line) => !line.includes("[Intro"))
+              .filter((line) => !line.includes("[Hook"))
+              .filter((line) => !line.includes("Powered by Genius"))
               .join("\n");
             lyrics = cleanText; 
           }
