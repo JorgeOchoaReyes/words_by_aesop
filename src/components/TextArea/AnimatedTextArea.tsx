@@ -13,7 +13,7 @@ export const AnimatedTextArea: React.FC<{
   placeholder = "Enter text",
 }) => { 
   return (
-    <div className="w-[60%] flex ">
+    <div className="w-[40vw] flex ">
       <motion.div
         className="w-full p-3 rounded-lg"
         initial={{ opacity: 0, y: -20 }}

@@ -16,8 +16,7 @@ export const SlickTable: React.FC<{
     data?: any[];
     tableTitle?: string;
 }> = ({
-  data,
-  tableTitle,
+  data, 
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -46,48 +45,55 @@ export const SlickTable: React.FC<{
  
 
   return (
-    <div className="overflow-visible" > 
-      <motion.div 
-        className="border rounded-lg overflow-hidden"
-        style={{ height: "400px", display: "flex", flexDirection: "column" }}
-        initial="hidden"
-        animate={isVisible ? "visible" : "hidden"}
-        variants={tableVariants}
-      >
-        <div className="overflow-auto flex-grow">
-          <Table>
-            <TableHeader>
-              <TableRow> 
-                {
-                  Object.keys((data)?.[0] ?? {}).map((key) => (
-                    <TableHead key={key}>{key}</TableHead>
-                  ))
-                }
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {([ 
-                ...data ?? [],
-              ])?.map((item, index) => (
-                <motion.tr
-                  key={index + "table-row"}
-                  custom={index}
-                  variants={rowVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  {
-                    Object.keys(item ?? {}).map((key) => (
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                      <TableCell key={key}>{item?.[key as keyof typeof item]}</TableCell>
-                    ))
-                  }
-                </motion.tr>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </motion.div>
-    </div>
+    <>
+      {
+        data?.length ===  0 ? (<> </>
+        ) : (
+          <div className="overflow-visible" > 
+            <motion.div 
+              className="border rounded-lg overflow-hidden"
+              style={{ height: "400px", display: "flex", flexDirection: "column" }}
+              initial="hidden"
+              animate={isVisible ? "visible" : "hidden"}
+              variants={tableVariants}
+            >
+              <div className="overflow-auto flex-grow">
+                <Table>
+                  <TableHeader>
+                    <TableRow> 
+                      {
+                        Object.keys((data)?.[0] ?? {}).map((key) => (
+                          <TableHead key={key}>{key}</TableHead>
+                        ))
+                      }
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {([ 
+                      ...data ?? [],
+                    ])?.map((item, index) => (
+                      <motion.tr
+                        key={index + "table-row"}
+                        custom={index}
+                        variants={rowVariants}
+                        initial="hidden"
+                        animate="visible"
+                      >
+                        {
+                          Object.keys(item ?? {}).map((key) => (
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                            <TableCell key={key}>{item?.[key as keyof typeof item]}</TableCell>
+                          ))
+                        }
+                      </motion.tr>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </motion.div>
+          </div>
+        )
+      }
+    </>
   );
 };

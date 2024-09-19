@@ -218,7 +218,7 @@ export default function Home() {
                 setCurrentText(cleanText(e, false, false, false));  
               }} 
             />    
-            <div className="w-[60%] flex-col justify-center items-center mb-24">
+            <div className="w-[40vw] flex-col justify-center items-center mb-10">
               <ColorPraragraphs 
                 currentText={currentText}
                 phonoticParagraph={phonoticParagraph}
@@ -231,10 +231,9 @@ export default function Home() {
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            
-            transition={{ duration: 1 }} 
+            transition={{ duration: 1 }}  
             className="flex flex-row w-fit justify-center">
-            <Button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-3 w-[100%] mb-10 text-black"
+            <Button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all"
               onClick={()=> {
                 const e = document.getElementById("genius_modal_1");
                 if(e) { 
@@ -247,7 +246,7 @@ export default function Home() {
               Find Lyrics 
             </Button>
             <Button
-              className="btn bg-[#ff63a5] hover:bg-[#ff76b8] mr-3 w-[100%] mb-10 text-black" 
+              className="btn bg-[#ff63a5] hover:bg-[#ff76b8] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all" 
               onClick={async () => { 
                 setCurrentText(cleanText(currentText, false, false, false));  
                 await processText(cleanText(currentText, false, false, false)); 
@@ -262,7 +261,7 @@ export default function Home() {
               { "Process Text"}
             </Button>
             <Button 
-              className="btn bg-[#ff6363] hover:bg-[#ff7676] mr-3 w-[100%] mb-10 text-white" 
+              className="btn bg-[#ff6363] hover:bg-[#ff7676] mr-3 w-[100%] mb-10 text-white active:scale-75 transition-all" 
               onClick={async () => {
                 toast({  
                   description: "Progress Cleared",
@@ -275,8 +274,7 @@ export default function Home() {
               <XCircleIcon size={24} color="white" style={{marginRight: "5"}} />
             Clear Progress
             </Button>
-            <Button className="btn bg-[#63ff63] hover:bg-[#76ff76] mr-3 w-[100%] mb-10 text-black"
-            
+            <Button className="btn bg-[#63ff63] hover:bg-[#76ff76] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all"
               onClick={async () => {
                 store.saveParagraphs(currentText);
                 toast({  

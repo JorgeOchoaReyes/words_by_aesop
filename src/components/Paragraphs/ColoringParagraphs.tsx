@@ -83,20 +83,23 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
           </motion.span>
         </motion.div>;
 
-        return isEmpty ? 
+        return  isEmpty ? 
           animtedTextForNoText
-          :
+          : 
           Object.values(paragraphs).map((paragraph, index) => {
             return (
               <motion.span
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.5 }, }} 
                 transition={{ duration: 0.5 }}
-                key={index} className="flex flex-row justify-start items-start">
+                key={index} 
+                className="flex flex-row justify-start items-start cursor-pointer bg-transparent hover:bg-amber-300 transition-all duration-0 rounded-md">
                 {paragraph}
               </motion.span>
             );
-          });
+          }); 
+        
       })() 
       }
     </motion.div>
