@@ -70,9 +70,9 @@ export const SearchSongModal: React.FC<SearchSongModalProps> = ({ setCurrentText
                   songReferences.map((song) => {
                     return (
                       <div key={song.id} className="modal-content">
-                        <div className="flex flex-row my-5 justify-between px-3"> 
+                        <div className="flex md:flex-row xs:flex-col my-5 md:justify-between xs:justify-center xs:items-center px-3"> 
                           <img src={song.image} alt={song.name} className="w-32 h-32 mr-3" />
-                          <h4 className="font-bold text-lg mr-3">{song.name}</h4>
+                          <h4 className="font-bold text-lg mr-3 text-center">{song.name}</h4>
                           <Button className="bg-green-600 hover:bg-green-500 content-center items-center justify-center flex" onClick={async () => {
                             const res = await searchSong.mutateAsync({ api_path: song.api_path });
                             if(res.song) {
