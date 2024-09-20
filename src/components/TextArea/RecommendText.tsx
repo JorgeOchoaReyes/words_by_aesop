@@ -33,7 +33,7 @@ export const RecommendText: React.FC<{
 }) => {
   return (
     <motion.div
-      className="w-full max-w-[50vw] rounded-lg shadow-lg p-5 border2 border-gray-600" 
+      className="w-full md:max-w-[50vw] sm:max-w-[98vw] rounded-lg shadow-lg p-5 border2 border-gray-600" 
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

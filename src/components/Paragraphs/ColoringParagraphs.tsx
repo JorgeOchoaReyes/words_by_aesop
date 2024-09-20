@@ -20,9 +20,8 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }} 
-      className="bg-neutral shadow-lg rounded-lg p-5 min-h-[350px] max-h-[400px] w-full bg-secondary overflow-auto"    
-      style={{ 
-        width: "100%", 
+      className="bg-neutral md:w-[100%] xs:w-[98vw] xs:w-max-[98vw] shadow-lg rounded-lg p-5 min-h-[350px] max-h-[400px] bg-secondary overflow-auto"    
+      style={{  
         justifyContent: "start", 
         borderRadius: 10,
         padding: 20,
@@ -95,7 +94,7 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
                 whileHover={{ scale: 1.05, transition: { duration: 0.5 }, }} 
                 transition={{ duration: 0.5 }}
                 key={index} 
-                className="flex flex-row justify-start items-start cursor-pointer bg-transparent hover:bg-amber-300 transition-all duration-0 rounded-md">
+                className="flex flex-row justify-start flex-wrap items-start cursor-pointer bg-transparent hover:bg-amber-300 transition-all duration-0 rounded-md">
                 {paragraph}
               </motion.span>
             );

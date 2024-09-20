@@ -153,14 +153,14 @@ export default function Home() {
     <>
       <Head>
         <title>Words By Aesop</title>
-        <meta name="description" content="Discover the ultimate text analysis tool! Our website offers precise word count, identifies unique words, provides pronunciation, and tracks vowel usage. Enhance your writing with our comprehensive text analysis services today!" />
+        <meta name="description" content="Discover the ultimate text analysis tool! Our website offers precise word count, identifies unique words, provides pronunciation, and tracks vowel usage. Enhance your writing with our comprehensive text analysis!" />
         <meta name="keywords" content="text analysis, word count, unique words, pronunciation, vowel usage" />
         <meta name="author" content="Jorge Reyes" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="index, follow" />
         <meta name="googlebot" content="index, follow" />
         <meta property="og:title" content="Words By Aesop" />
-        <meta property="og:description" content="Discover the ultimate text analysis tool! Our website offers precise word count, identifies unique words, provides pronunciation, and tracks vowel usage. Enhance your writing with our comprehensive text analysis services today!" />
+        <meta property="og:description" content="Discover the ultimate text analysis tool! Our website offers precise word count, identifies unique words, provides pronunciation, and tracks vowel usage. Enhance your writing!" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://wordsbyaesop.com" />
         <meta property="og:image" content="https://wordsbyaesop.com/og-image.png" />
@@ -168,7 +168,7 @@ export default function Home() {
         <meta property="og:locale" content="en_US" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Words By Aesop" />
-        <meta name="twitter:description" content="Discover the ultimate text analysis tool! Our website offers precise word count, identifies unique words, provides pronunciation, and tracks vowel usage. Enhance your writing with our comprehensive text analysis services today!" />
+        <meta name="twitter:description" content="Discover the ultimate text analysis tool! Our website offers precise word count, identifies unique words, provides pronunciation, and tracks vowel usage. Enhance your writing with our comprehensive text analysis!" />
         <meta name="twitter:image" content="https://wordsbyaesop.com/og-image.png" />
         <meta name="twitter:site" content="@wordsbyaesop" />
         <meta name="twitter:creator" content="@wordsbyaesop" />
@@ -180,8 +180,8 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head> 
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b w-full">   
-        <div className="flex w-full justify-around mt-14">
-          <h1 className="text-5xl font-bold flex flex-row items-center">
+        <div className="flex w-full md:justify-around sm:justify-center mt-14 xs:flex-col md:flex-row">
+          <h1 className="text-5xl font-bold flex md:justify-around xs:justify-center text-center items-center xs:flex-col md:flex-row">
             <motion.img
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -197,16 +197,15 @@ export default function Home() {
           Words by Aesop
           </h1>
           <FancyMetronome />
-        </div>
-
+        </div> 
         <div className="flex flex-col items-center h-full"> 
-          <div className="flex flex-row justify-between w-full"> 
-            <h2 ref={h2Ref} className="text-2xl mb-5 underline self-start"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
+          <div className="flex md:justify-between xs:justify-center w-full xs:flex-col md:flex-row"> 
+            <h2 ref={h2Ref} className="md:text-2xl xs:text-xl mb-5 underline md:self-start text-center"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}  
-              className="flex flex-row w-fit justify-start self-end">
+              className="flex flex-row w-fit xs:self-center md:self-end">
               <Button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all text-lg"
                 onClick={()=> {
                   setGeniusModal(true);
@@ -217,27 +216,22 @@ export default function Home() {
               </Button>
             </motion.div>
           </div>
-          <div className="flex flex-row w-[100%] justify-around"> 
+          <div className="flex md:w-[100%] xs:w-[100vw] justify-around xs:flex-col md:flex-row"> 
             <AnimatedTextArea   
-              placeholder="Type here"  
+              placeholder="Get creative here............"  
               rows={13}
               textValue={currentText}
-              setTextValue={async (e) => {  
-                if(h2Ref) {
-                  // scroll text box to top of page 
-                  h2Ref.current?.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
-                } 
+              setTextValue={async (e) => {   
                 if(e.endsWith(" ") || e.endsWith("\n")) {
                   setCurrentText(cleanText(e, false, false, false));  
                   await processText(cleanText(e, false, false, false));
                   return;
-                }  
-                
+                }   
                 store.saveParagraphs(cleanText(e, false, false, false));
                 setCurrentText(cleanText(e, false, false, false));  
               }} 
             />    
-            <div className="w-[50vw] flex-col justify-center items-center mb-10">
+            <div className="md:w-[50vw] sm:w-[100vw] flex-col justify-center items-center mb-10">
               <ColorPraragraphs 
                 currentText={currentText}
                 phonoticParagraph={phonoticParagraph}
@@ -247,13 +241,15 @@ export default function Home() {
               />
             </div>
           </div>   
-          <div className="w-full h-96 flex flex-row mb-5 mt-10">
-            <div style={{ 
-              width: "100%",  
-              borderRadius: 10,  
-              display: "flex",
-              flexDirection: "column",  
-            }}> 
+          <div className="w-full md:h-96 xs:w-full flex flex-row mb-5 mt-10 xs:flex-col md:flex-row">
+            <div 
+              className="xs:mb-10"
+              style={{ 
+                width: "100%",  
+                borderRadius: 10,  
+                display: "flex",
+                flexDirection: "column",  
+              }}> 
               <RecommendText
                 rhymingWords={rhymingWords}
                 cleanText={cleanText}
@@ -264,12 +260,13 @@ export default function Home() {
                 setShowAllRhyming={setShowAllRhyming}
               />
             </div>
-            <div style={{ 
-              width: "70%",  
-              borderRadius: 10,  
-              display: "flex",  
-              justifyContent: "space-evenly",
-            }}>       
+            <div 
+              className="xs:w-full md:w-[70%]"
+              style={{   
+                borderRadius: 10,  
+                display: "flex",  
+                justifyContent: "space-evenly",
+              }}>       
               <MetricsParagraphs 
                 phonoticsCount={phonoticsCount}
                 uniqueWords={uniqueWords}
@@ -284,8 +281,7 @@ export default function Home() {
           }}
           isOpen={geniusModal}
           toggleModal={() => setGeniusModal(!geniusModal)}
-        />
-
+        /> 
       </main>
     </>
   );

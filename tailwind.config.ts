@@ -1,9 +1,11 @@
 import { type Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import defaultTheme from "tailwindcss/defaultTheme";
 
 export default {
   darkMode: ["class"],
-  content: ["./src/**/*.tsx"],
+  content: ["./src/**/*.tsx"], 
+			
   theme: {
   	extend: {
   		fontFamily: {
@@ -12,7 +14,7 @@ export default {
   		borderRadius: {
   			lg: "var(--radius)",
   			md: "calc(var(--radius) - 2px)",
-  			sm: "calc(var(--radius) - 4px)"
+  			sm: "calc(var(--radius) - 4px)",
   		},
   		colors: {
   			background: "hsl(var(--background))",
@@ -54,13 +56,14 @@ export default {
   				"3": "hsl(var(--chart-3))",
   				"4": "hsl(var(--chart-4))",
   				"5": "hsl(var(--chart-5))"
-  			}
-  		}
+  			}, 
+  		},
+      	screens: { 
+        xs: { min: "0px", max: "639px" }, 
+        ...defaultTheme.screens,
+      	},
   	}
-  },
-  daisyui: {
-    themes: ["light", "dark", "cupcake", "bumblebee", "emerald", "corporate", "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black", "luxury", "dracula"],
-  },
+  }, 
   plugins: [ 
     require("tailwindcss-animate")
   ],
