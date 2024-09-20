@@ -6,12 +6,11 @@ interface ParagraphsColorProps {
     phonoticParagraph: Record<string, string>;
     phonoticsCount: Record<string, number>;
     phonoticsAsMatchingColors: Record<string, string>;
-    checkIfColorIsDark: (hex: string) => boolean;
+    checkIfColorIsDark: (hex: string) => string;
 }
 export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
   currentText,
-  phonoticParagraph,
-  phonoticsCount,
+  phonoticParagraph, 
   phonoticsAsMatchingColors,
   checkIfColorIsDark,
 }) => {
@@ -45,10 +44,10 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
           word = word.replace(/[^0-9A-Za-z']/g, "").toLowerCase();
           const phonotics = phonoticParagraph[word]; 
           const colorPhontics = phonotics?.split(" ").map((phonotic) => { 
-            const textWhite = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? "")) ? "text-white" : "text-white";
-            return <span className={textWhite} key={phonotic} style={{
+            const textColor = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? ""));
+            return <span key={phonotic} style={{
               backgroundColor: phonoticsAsMatchingColors[phonotic], 
-              color: "black",
+              color: textColor,
               marginLeft: 3,
             }}>{phonotic}</span>;
           }); 

@@ -55,14 +55,12 @@ export default function Home() {
     }
     return newText;
   };
-  const checkIfColorIsDark = (hex: string): boolean => {
-    const c = hex.substring(1);
-    const rgb = parseInt(c, 16);
-    const r = (rgb >> 16) & 0xff;
-    const g = (rgb >>  8) & 0xff;
-    const b = (rgb >>  0) & 0xff;
-    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    return luma < 100;
+  const checkIfColorIsDark = (hex: string): string => {
+    const r = parseInt(hex.substring(1, 3), 16);
+    const g = parseInt(hex.substring(3, 5), 16);
+    const b = parseInt(hex.substring(5, 7), 16); 
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b; 
+    return luminance > 128 ? "#000000" : "#FFFFFF";   
   };  
   const countOfPhonotics = (phonotics: Record<string, string>, text: string): Record<string, number> => {
     const counts = {} as Record<string, number>;
@@ -100,21 +98,12 @@ export default function Home() {
         const newPhonotic = (res.words[word] ?? ""); 
         const splitPhonotic = newPhonotic.split(" "); 
         splitPhonotic.forEach((phonotic) => {
-          if(!phonoticsAsMatchingColors[phonotic]) {  
-            const makeValidColor = () => `#${Math.floor(Math.random()*16777215).toString(16)}`;
-            const ensureColorHasSixChars = (color: string) => {
-              console.log("Color: ", color.length);
-              if(color.length < 7) { 
-                const dif = 6 - color.length;
-                let newColor = color;
-                for(let i = 0; i <= dif; i++) {
-                  newColor = `${newColor}0`;
-                } 
-                return newColor;
-              }
-              return color;
-            };
-            phonoticsAsMatchingColors[phonotic] = `${ensureColorHasSixChars(makeValidColor())}`;
+          if(!phonoticsAsMatchingColors[phonotic]) {   
+            function getRandomHexColor() { 
+              const randomChannel = () => Math.floor(Math.random() * 256).toString(16).padStart(2, "0");
+              return `#${randomChannel()}${randomChannel()}${randomChannel()}`;
+            } 
+            phonoticsAsMatchingColors[phonotic] = `${getRandomHexColor()}`;
           } else {
             return;
           }
