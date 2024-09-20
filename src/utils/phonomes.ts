@@ -3,8 +3,8 @@ export const processPhonemes = (text: string, dictionary: Record<string, string>
 } => {
   const allPhonemes = {} as Record<string, string>;
   for(const word of text.trim().split(" ").join("\n").split("\n")) {
-    const cleanWord = word;
-    const phonemes = dictionary[cleanWord.toLowerCase()];
+    const cleanWord = word.replaceAll(/[^0-9A-Za-z']/g, "").toLowerCase();
+    const phonemes = dictionary[cleanWord];
     if (!phonemes) {
       console.log(`No phonemes found for word: ${cleanWord}`);
       allPhonemes[cleanWord] = "";

@@ -1,9 +1,7 @@
-import React from "react"; 
+import { ReloadIcon } from "@radix-ui/react-icons";
 
-export const Loading: React.FC = () => {
-  return (
-    <div className="flex items-center justify-center h-screen">
-      <span className="loading loading-spinner loading-lg"></span>
-    </div>
+export const Loading = () => {
+  return ( 
+    <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
   );
 };

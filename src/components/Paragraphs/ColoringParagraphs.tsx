@@ -43,8 +43,8 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
             paragraphIndex++;
             return;
           }
-          const phonotics = phonoticParagraph[word];
-          console.log(phonoticParagraph, word,);
+          word = word.replace(/[^0-9A-Za-z']/g, "").toLowerCase();
+          const phonotics = phonoticParagraph[word]; 
           const colorPhontics = phonotics?.split(" ").map((phonotic) => { 
             const textWhite = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? "")) ? "text-white" : "text-white";
             return <span className={textWhite} key={phonotic} style={{
