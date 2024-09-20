@@ -114,6 +114,8 @@ export const geniusRouter = createTRPCRouter({
               .filter((line) => !line.includes("[Intro"))
               .filter((line) => !line.includes("[Hook"))
               .filter((line) => !line.includes("Powered by Genius"))
+              .filter((line) => !line.includes("Lyrics for this song have yet to be released. Please check back once the song has been released."))
+              .filter((line) => !line.includes("[Produced by"))
               .join("\n");
             lyrics = cleanText; 
           }
