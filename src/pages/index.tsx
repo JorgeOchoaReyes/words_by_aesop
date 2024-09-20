@@ -25,6 +25,7 @@ export default function Home() {
   const storedParagraphs = useStore((state) => state.paragraphs); 
   const h2Ref = React.useRef<HTMLHeadingElement | null>(null);
   const [loading, setLoading] = React.useState(false);
+  const [geniusModal, setGeniusModal] = React.useState(false);
   const {toast} = useToast();
   const [rhymingWords, setRhymingWords] = React.useState<{
     highlyRhyming: string[];
@@ -140,7 +141,7 @@ export default function Home() {
     const paragraphs = storedParagraphs; 
     if(paragraphs && paragraphs.length > 0) {
       setCurrentText(paragraphs);
-      processText(paragraphs).then(() => {
+      processText(paragraphs).then(() => { 
         console.log("Processed text");
       }).catch((err) => {
         console.error(err);
@@ -197,8 +198,25 @@ export default function Home() {
           </h1>
           <FancyMetronome />
         </div>
+
         <div className="flex flex-col items-center h-full"> 
-          <h2 ref={h2Ref} className="text-2xl mb-5 underline self-start"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
+          <div className="flex flex-row justify-between w-full"> 
+            <h2 ref={h2Ref} className="text-2xl mb-5 underline self-start"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}  
+              className="flex flex-row w-fit justify-start self-end">
+              <Button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all text-lg"
+                onClick={()=> {
+                  setGeniusModal(true);
+                }}
+              >
+                <GeniusLogo />
+              Find Lyrics 
+              </Button>
+            </motion.div>
+          </div>
           <div className="flex flex-row w-[100%] justify-around"> 
             <AnimatedTextArea   
               placeholder="Type here"  
@@ -214,6 +232,8 @@ export default function Home() {
                   await processText(cleanText(e, false, false, false));
                   return;
                 }  
+                
+                store.saveParagraphs(cleanText(e, false, false, false));
                 setCurrentText(cleanText(e, false, false, false));  
               }} 
             />    
@@ -227,67 +247,7 @@ export default function Home() {
               />
             </div>
           </div>   
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}  
-            className="flex flex-row w-fit justify-center">
-            <Button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all"
-              onClick={()=> {
-                const e = document.getElementById("genius_modal_1");
-                if(e) { 
-                  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-                  (e as any)?.showModal();
-                }
-              }}
-            >
-              <GeniusLogo />
-              Find Lyrics 
-            </Button>
-            <Button
-              className="btn bg-[#ff63a5] hover:bg-[#ff76b8] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all" 
-              onClick={async () => { 
-                setCurrentText(cleanText(currentText, false, false, false));  
-                await processText(cleanText(currentText, false, false, false)); 
-                toast({  
-                  title: "Text Processed",
-                  description: "Text Processed Successfully",
-                  variant: "default",
-                });
-              }}
-            >
-              <WashingMachineIcon size={24} color="black" style={{marginRight: "5"}} />
-              { "Process Text"}
-            </Button>
-            <Button 
-              className="btn bg-[#ff6363] hover:bg-[#ff7676] mr-3 w-[100%] mb-10 text-white active:scale-75 transition-all" 
-              onClick={async () => {
-                toast({  
-                  description: "Progress Cleared",
-                  title: "Cleared",
-                  variant: "destructive",
-                }); 
-                store.clearParagraphs();
-              }}
-            >
-              <XCircleIcon size={24} color="white" style={{marginRight: "5"}} />
-            Clear Progress
-            </Button>
-            <Button className="btn bg-[#63ff63] hover:bg-[#76ff76] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all"
-              onClick={async () => {
-                store.saveParagraphs(currentText);
-                toast({  
-                  title: "Saved",
-                  description: "Progress Saved Successfully!",
-                  variant: "default",
-                });
-              }}
-            >
-              <SaveAllIcon size={24} color="black" style={{marginRight: "5"}} />
-            Save Progress
-            </Button>
-          </motion.div>  
-          <div className="w-full h-96 flex flex-row mb-5">
+          <div className="w-full h-96 flex flex-row mb-5 mt-10">
             <div style={{ 
               width: "100%",  
               borderRadius: 10,  
@@ -317,10 +277,14 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <SearchSongModal setCurrentText={async (text: string) => {
-          setCurrentText(cleanText(text, false, false, false));  
-          await processText(cleanText(text, false, false, false));
-        }} />
+        <SearchSongModal 
+          setCurrentText={async (text: string) => {
+            setCurrentText(cleanText(text, false, false, false));  
+            await processText(cleanText(text, false, false, false));
+          }}
+          isOpen={geniusModal}
+          toggleModal={() => setGeniusModal(!geniusModal)}
+        />
 
       </main>
     </>
