@@ -11,8 +11,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
-import { object } from "zod";
+} from "../ui/table"; 
 
 export const SlickTable: React.FC<{
     data?: any[];

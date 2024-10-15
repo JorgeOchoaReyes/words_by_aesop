@@ -1,15 +1,13 @@
 import React, { use } from "react";  
 import { type GeniusSongReference } from "~/schema";
-import { api } from "~/utils/api";
-
-import { useState } from "react";
+import { api } from "~/utils/api"; 
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../ui/button";
-import { CopyIcon, SearchIcon, X } from "lucide-react";
+import { CopyIcon, SearchIcon } from "lucide-react";
 import { Loading } from "../Loading";
 
 interface SearchSongModalProps {
-  setCurrentText: (text: string) => void;
+  setCurrentText: (text: string, id: string) => void;
   isOpen: boolean;
   toggleModal: () => void;
 }
@@ -73,11 +71,11 @@ export const SearchSongModal: React.FC<SearchSongModalProps> = ({ setCurrentText
                         <div className="flex md:flex-row xs:flex-col my-5 md:justify-between xs:justify-center xs:items-center px-3"> 
                           <img src={song.image} alt={song.name} className="w-32 h-32 mr-3" />
                           <h4 className="font-bold text-lg mr-3 text-center">{song.name}</h4>
-                          <Button className="bg-green-600 hover:bg-green-500 content-center items-center justify-center flex" onClick={async () => {
+                          <Button className="bg-green-600 hover:bg-green-500 content-center items-center justify-center flex" onClick={async () => { 
                             const res = await searchSong.mutateAsync({ api_path: song.api_path });
                             if(res.song) {
                               const songScript = res.song.lyrics;
-                              setCurrentText(songScript);
+                              setCurrentText(songScript, (res?.song?.id.toString() ?? ""));
                               toggleModal();
                             }  
                           }

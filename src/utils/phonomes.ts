@@ -1,3 +1,5 @@
+import _ from "underscore";
+
 export const processPhonemes = (text: string, dictionary: Record<string, string>): {
     words: Record<string, string>;
 } => {
@@ -85,4 +87,12 @@ export const findWordsThatRhyme = (word: string, dictionary: Record<string, stri
     rhyming,
     somewhatRhyming,
   };
+};
+
+export const syllableCount = (phones: string): number => {
+  const countSyllables = function (word: string) {
+    return (word.match(/[012]/g) ?? []).length;
+  };
+  const syllableCount = countSyllables(phones);
+  return syllableCount;
 };
