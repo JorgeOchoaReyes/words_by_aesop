@@ -252,7 +252,7 @@ export default function Home() {
                       geniusSongId && 
                 <Button className="btn bg-black hover:bg-grey mr-3 w-[100%] mb-10 text-white active:scale-75 transition-all text-lg"
                   onClick={()=> {
-                    const geniusId = process.env.NODE_ENV === "production" ? "https://www.wordsbyaesop.com?geniusId=" : "http://localhost:3000?geniusId=" + geniusSongId;
+                    const geniusId = (process.env.NODE_ENV === "production" ? "https://www.wordsbyaesop.com?geniusId=" : "http://localhost:3000?geniusId=") + geniusSongId;
                     if(navigator.clipboard) {
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                       ((navigator?.clipboard as any))?.writeText(geniusId);
