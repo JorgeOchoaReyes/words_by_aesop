@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Head from "next/head";
 import React, { useEffect } from "react";   
 import { MetricsParagraphs } from "~/components/Paragraphs/MetricsParagraphs";
@@ -11,9 +13,12 @@ import { AnimatedTextArea } from "~/components/TextArea/AnimatedTextArea";
 import { Button } from "~/components/ui/button";
 import { RecommendText } from "~/components/TextArea/RecommendText";
 import FancyMetronome from "~/components/Metronome";
-import { SaveAllIcon, WashingMachineIcon, XCircleIcon } from "lucide-react"; 
-import { useToast } from "~/hooks/use-toast";
 import { motion } from "framer-motion";
+import { ShareIcon } from "lucide-react";
+import { useRouter } from "next/router";
+import { api } from "~/utils/api";
+import { useToast } from "~/hooks/use-toast";
+import { AnimatedLoading } from "~/components/Loading/AnimatedLoading";
 
 export default function Home() {  
   const [currentText, setCurrentText] = React.useState<string>(""); 
@@ -24,9 +29,10 @@ export default function Home() {
   const store = useStore();
   const storedParagraphs = useStore((state) => state.paragraphs); 
   const h2Ref = React.useRef<HTMLHeadingElement | null>(null);
-  const [loading, setLoading] = React.useState(false);
+  const [, setLoading] = React.useState(false);
   const [geniusModal, setGeniusModal] = React.useState(false);
-  const {toast} = useToast();
+  const [geniusSongId, setGeniusSongId] = React.useState("");
+  const toast = useToast(); 
   const [rhymingWords, setRhymingWords] = React.useState<{
     highlyRhyming: string[];
     rhyming: string[];
@@ -137,6 +143,40 @@ export default function Home() {
       });
     }
   }, [storedParagraphs]);
+
+  const router = useRouter(); 
+  const query = router.query; 
+
+  const searchSong = api.geniusRouter.getSong.useMutation(); 
+
+  useEffect(() => {
+    void (async () => {
+      if(query?.geniusId) {
+        try {
+          const res = await searchSong.mutateAsync({ api_path: "/songs/" + (query.geniusId as string) });
+          if(res.song) {
+            const songScript = res.song.lyrics;
+            setCurrentText(cleanText(songScript, false, false, false));
+            await processText(cleanText(songScript, false, false, false));
+            store.saveParagraphs(cleanText(songScript, false, false, false));
+            setGeniusSongId(query.geniusId as string);
+          } else {
+            toast.toast({
+              title: "Error",
+              description: "Failed to load song",
+              variant: "destructive",
+            });
+          }
+        } catch (error) { 
+          toast.toast({
+            title: "Error",
+            description: "Failed to load song", 
+            variant: "destructive",
+          });
+        } 
+      }
+    })();
+  }, [query]);
   
   return (  
     <>
@@ -188,85 +228,113 @@ export default function Home() {
           <FancyMetronome />
         </div> 
         <div className="flex flex-col items-center h-full"> 
-          <div className="flex md:justify-between xs:justify-center w-full xs:flex-col md:flex-row"> 
-            <h2 ref={h2Ref} className="md:text-2xl xs:text-xl mb-5 underline md:self-start text-center"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1 }}  
-              className="flex flex-row w-fit xs:self-center md:self-end">
-              <Button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all text-lg"
-                onClick={()=> {
-                  setGeniusModal(true);
-                }}
-              >
-                <GeniusLogo />
+          {
+            searchSong.isPending ? 
+              <AnimatedLoading />
+              :
+              <>
+                <div className="flex md:justify-between xs:justify-center w-full xs:flex-col md:flex-row"> 
+                  <h2 ref={h2Ref} className="md:text-2xl xs:text-xl mb-5 underline md:self-start text-center"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}  
+                    className="flex flex-row w-fit xs:self-center md:self-end">
+                    <Button className="btn bg-[#ffff63] hover:bg-[#ffff76] mr-3 w-[100%] mb-10 text-black active:scale-75 transition-all text-lg"
+                      onClick={()=> {
+                        setGeniusModal(true);
+                      }}
+                    >
+                      <GeniusLogo />
               Find Lyrics 
-              </Button>
-            </motion.div>
-          </div>
-          <div className="flex md:w-[100%] xs:w-[100vw] justify-around xs:flex-col md:flex-row"> 
-            <AnimatedTextArea   
-              placeholder="Get creative here............"  
-              rows={13}
-              textValue={currentText}
-              setTextValue={async (e) => {   
-                if(e.endsWith(" ") || e.endsWith("\n")) {
-                  setCurrentText(cleanText(e, false, false, false));  
-                  await processText(cleanText(e, false, false, false));
-                  return;
-                }   
-                store.saveParagraphs(cleanText(e, false, false, false));
-                setCurrentText(cleanText(e, false, false, false));  
-              }} 
-            />    
-            <div className="md:w-[50vw] sm:w-[100vw] flex-col justify-center items-center mb-10">
-              <ColorPraragraphs 
-                currentText={currentText}
-                phonoticParagraph={phonoticParagraph}
-                phonoticsCount={phonoticsCount}
-                phonoticsAsMatchingColors={phonoticsAsMatchingColors}
-                checkIfColorIsDark={checkIfColorIsDark}
-              />
-            </div>
-          </div>   
-          <div className="w-full md:h-96 xs:w-full flex flex-row mb-5 mt-10 xs:flex-col md:flex-row">
-            <div 
-              className="xs:mb-10"
-              style={{ 
-                width: "100%",  
-                borderRadius: 10,  
-                display: "flex",
-                flexDirection: "column",  
-              }}> 
-              <RecommendText
-                rhymingWords={rhymingWords}
-                cleanText={cleanText}
-                currentText={currentText}
-                setCurrentText={setCurrentText}
-                processText={processText}
-                showAllRhyming={showAllRhyming}
-                setShowAllRhyming={setShowAllRhyming}
-              />
-            </div>
-            <div 
-              className="xs:w-full md:w-[70%]"
-              style={{   
-                borderRadius: 10,  
-                display: "flex",  
-                justifyContent: "space-evenly",
-              }}>       
-              <MetricsParagraphs 
-                phonoticsCount={phonoticsCount}
-                uniqueWords={uniqueWords}
-              />
-            </div>
-          </div>
+                    </Button>
+                    {
+                      geniusSongId && 
+                <Button className="btn bg-black hover:bg-grey mr-3 w-[100%] mb-10 text-white active:scale-75 transition-all text-lg"
+                  onClick={()=> {
+                    const geniusId = process.env.NODE_ENV === "production" ? "https://www.wordsbyaesop.com?geniusId=" : "http://localhost:3000?geniusId=" + geniusSongId;
+                    if(navigator.clipboard) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                      ((navigator?.clipboard as any))?.writeText(geniusId);
+                      toast.toast({
+                        title: "Copied",
+                        description: "Link copied to clipboard", 
+                      });
+                    }
+                  }}
+                > 
+                  <ShareIcon size={24} className="mr-4" />
+              Share Lyrics 
+                </Button>
+                    }
+                  </motion.div>
+                </div>
+                <div className="flex md:w-[100%] xs:w-[100vw] justify-around xs:flex-col md:flex-row"> 
+                  <AnimatedTextArea   
+                    placeholder="Get creative here............"  
+                    rows={13}
+                    textValue={currentText}
+                    setTextValue={async (e) => {   
+                      if(e.endsWith(" ") || e.endsWith("\n")) {
+                        setCurrentText(cleanText(e, false, false, false));  
+                        await processText(cleanText(e, false, false, false));
+                        return;
+                      }   
+                      store.saveParagraphs(cleanText(e, false, false, false));
+                      setCurrentText(cleanText(e, false, false, false));  
+                    }} 
+                  />    
+                  <div className="md:w-[50vw] sm:w-[100vw] flex-col justify-center items-center mb-10">
+                    <ColorPraragraphs 
+                      currentText={currentText}
+                      phonoticParagraph={phonoticParagraph}
+                      phonoticsCount={phonoticsCount}
+                      phonoticsAsMatchingColors={phonoticsAsMatchingColors}
+                      checkIfColorIsDark={checkIfColorIsDark}
+                    />
+                  </div>
+                </div>   
+                <div className="w-full md:h-96 xs:w-full flex flex-row mb-5 mt-10 xs:flex-col md:flex-row">
+                  <div 
+                    className="xs:mb-10"
+                    style={{ 
+                      width: "100%",  
+                      borderRadius: 10,  
+                      display: "flex",
+                      flexDirection: "column",  
+                    }}> 
+                    <RecommendText
+                      rhymingWords={rhymingWords}
+                      cleanText={cleanText}
+                      currentText={currentText}
+                      setCurrentText={setCurrentText}
+                      processText={processText}
+                      showAllRhyming={showAllRhyming}
+                      setShowAllRhyming={setShowAllRhyming}
+                    />
+                  </div>
+                  <div 
+                    className="xs:w-full md:w-[70%]"
+                    style={{   
+                      borderRadius: 10,  
+                      display: "flex",  
+                      justifyContent: "space-evenly",
+                    }}>       
+                    <MetricsParagraphs 
+                      phonoticsCount={phonoticsCount}
+                      uniqueWords={uniqueWords}
+                    />
+                  </div>
+                </div>
+              </>
+          } 
         </div>
         <SearchSongModal 
-          setCurrentText={async (text: string) => {
+          setCurrentText={async (text: string, id: string) => {
             setCurrentText(cleanText(text, false, false, false));  
-            await processText(cleanText(text, false, false, false));
+            await processText(cleanText(text, false, false, false)); 
+            store.saveParagraphs(cleanText(text, false, false, false));
+            setGeniusSongId(id);
           }}
           isOpen={geniusModal}
           toggleModal={() => setGeniusModal(!geniusModal)}

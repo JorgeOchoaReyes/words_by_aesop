@@ -124,7 +124,7 @@ export const geniusRouter = createTRPCRouter({
               .filter((line) => !line.includes("[Post-Chorus"))
               .join("\n");
             lyrics = cleanText; 
-          }
+          }         
         } 
         return {
           song: {

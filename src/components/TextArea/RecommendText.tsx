@@ -1,6 +1,6 @@
 import React from "react"; 
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export const RecommendText: React.FC<{
     rhymingWords: {
@@ -69,6 +69,7 @@ export const RecommendText: React.FC<{
                       initial={{ opacity: 0, y: -20 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -20 }}
+                      className="flex flex-wrap overflow-y-auto max-h-80"
                       transition={{ duration: 0.5 }}
                     >
                       {
