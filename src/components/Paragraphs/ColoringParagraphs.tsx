@@ -138,7 +138,7 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
                     transition={{ duration: 0.5 }}
                     className="flex flex-col justify-start items-start bg-[#6d8779] rounded-xl w-72">
                     <p className="text-lg mb-5 font-bold mt-1 text-white ml-5"> Total Words: <b>{paragraphDetails?.totalWords} </b> </p>
-                    <p className="text-lg mb-5 font-bold mt-1 text-white ml-5"> Total Phonotics: <b>{paragraphDetails?.totalPhonotics} </b> </p>
+                    <p className="text-lg mb-5 font-bold mt-1 text-white ml-5"> Total Phonetics: <b>{paragraphDetails?.totalPhonotics} </b> </p>
                     <p className="text-lg mb-5 font-bold mt-1 text-white ml-5"> Total Syllables: <b>{paragraphDetails?.totalSyllables} </b> </p>
                   </motion.div> 
                 </HoverCardContent>
