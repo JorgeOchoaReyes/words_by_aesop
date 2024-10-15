@@ -122,6 +122,8 @@ export const geniusRouter = createTRPCRouter({
               .filter((line) => !line.includes("[Guitar"))
               .filter((line) => !line.includes("[Piano"))
               .filter((line) => !line.includes("[Post-Chorus"))
+              .filter((line) => !line.includes("[Outro"))
+              .filter((line) => !line.includes("[Video"))
               .join("\n");
             lyrics = cleanText; 
           }         
