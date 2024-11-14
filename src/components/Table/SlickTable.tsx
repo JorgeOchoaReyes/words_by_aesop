@@ -75,7 +75,7 @@ export const SlickTable: React.FC<{
                     ]) 
                       ?.map((item, index) => (
                         <motion.tr
-                          key={index + "table-row"}
+                          key={index + "table-row"+item}
                           custom={index}
                           variants={rowVariants}
                           initial="hidden"

@@ -68,9 +68,9 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
           }
           word = word.replace(/[^0-9A-Za-z']/g, "").toLowerCase();
           const phonotics = phonoticParagraph[word]; 
-          const colorPhontics = phonotics?.split(" ").map((phonotic) => { 
+          const colorPhontics = phonotics?.split(" ").map((phonotic, index) => { 
             const textColor = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? ""));
-            return <span key={phonotic} style={{
+            return <span key={phonotic+index} style={{
               backgroundColor: phonoticsAsMatchingColors[phonotic], 
               color: textColor,
               marginLeft: 3,
@@ -83,14 +83,14 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
           const textPhonoticsSize = "text-[1rem]"; 
           currentTotalWords++;
           currentTotalPhonotics += phonotics?.split(" ").length ?? 0;
-          currentTotalSyllables += syllableCount(phonotics ?? ""); 
+          currentTotalSyllables += syllableCount(phonotics ?? "");  
           paragraphs[paragraphIndex]?.push(
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              key={index} className="flex flex-col mx-2">
-              <div key={word} className={`text-sm text-center ${textWordSize}`}>{word}  </div>   
+              key={index+word} className="flex flex-col mx-2">
+              <div key={word} className={`text-lg text-center underline ${textWordSize}`}> {word}  </div>   
               <div className={`text-md ${textPhonoticsSize} text-center ml-1`}> {colorPhontics}</div>
             </motion.div>
           ); 
@@ -111,10 +111,12 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
           : 
           Object.values(paragraphs).map((paragraph, index) => {
             const paragraphDetails = paragraphDetailsIndex[index];
+            if(paragraph.length === 1 && (paragraph[0] as {type: string}).type === "br") { 
+              return;
+            } 
             return (
-              <HoverCard key={index} openDelay={100} closeDelay={100} open={isHovered[index]}>
-                <HoverCardTrigger onClick={() => {
-                  // mobile only
+              <HoverCard key={index+"hover-card"} openDelay={100} closeDelay={100} open={isHovered[index]}>
+                <HoverCardTrigger onClick={() => { 
                   const isMobile = window.innerWidth < 768;
                   if(isMobile) {
                     setIsHovered((prev) => ({ [index]: !prev[index] }));
@@ -130,13 +132,14 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
                     className="flex flex-row justify-start flex-wrap items-start cursor-pointer bg-transparent hover:bg-amber-300 transition-all duration-0 rounded-md">
                     {paragraph} 
                   </motion.span>
+                  <hr className="my-3 border-black" />
                 </HoverCardTrigger>
                 <HoverCardContent align="end"> 
                   <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="flex flex-col justify-start items-start bg-[#6d8779] rounded-xl w-72">
+                    className="flex flex-col justify-start items-start bg-[#3c82f5] rounded-xl w-72">
                     <p className="text-lg mb-5 font-bold mt-1 text-white ml-5"> Total Words: <b>{paragraphDetails?.totalWords} </b> </p>
                     <p className="text-lg mb-5 font-bold mt-1 text-white ml-5"> Total Phonetics: <b>{paragraphDetails?.totalPhonotics} </b> </p>
                     <p className="text-lg mb-5 font-bold mt-1 text-white ml-5"> Total Syllables: <b>{paragraphDetails?.totalSyllables} </b> </p>
