@@ -8,13 +8,13 @@ export const processPhonemes = (text: string, dictionary: Record<string, string>
     const cleanWord = word.replaceAll(/[^0-9A-Za-z']/g, "").toLowerCase();
     const phonemes = dictionary[cleanWord];
     if (!phonemes) {
-      console.log(`No phonemes found for word: ${cleanWord}`);
+      // console.log(`No phonemes found for word: ${cleanWord}`);
       allPhonemes[cleanWord] = "";
       continue;
     } 
     allPhonemes[cleanWord] = (phonemes);
   }  
-  console.log("allPhonemes", allPhonemes);
+  // console.log("allPhonemes", allPhonemes);
   return {
     words: allPhonemes,
   };
