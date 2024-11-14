@@ -72,13 +72,23 @@ export const findWordsThatRhyme = (word: string, dictionary: Record<string, stri
         matchingPhonemes++;
       }
     }
-    if(matchingPhonemes === 4) {
+
+    const maxLengthHIghlyRhyming = 10;
+    const maxLengthRhyming = 15;
+    const maxLengthSomewhatRhyming = 20;
+    if(matchingPhonemes === 4
+    && highlyRhyming.length < maxLengthHIghlyRhyming
+    ) {
       highlyRhyming.push(dictWord);
     }
-    else if(matchingPhonemes === 3) {
+    else if(matchingPhonemes === 3 
+    && rhyming.length < maxLengthRhyming
+    ) {
       rhyming.push(dictWord);
     }
-    else if(matchingPhonemes === 2) {
+    else if(matchingPhonemes === 2 
+    && somewhatRhyming.length < maxLengthSomewhatRhyming
+    ) {
       somewhatRhyming.push(dictWord);
     } 
   }
