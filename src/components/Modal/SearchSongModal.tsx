@@ -7,7 +7,7 @@ import { CopyIcon, SearchIcon } from "lucide-react";
 import { Loading } from "../Loading";
 
 interface SearchSongModalProps {
-  setCurrentText: (text: string, id: string) => void;
+  setCurrentText: (text: string, id: string, songName: string) => void;
   isOpen: boolean;
   toggleModal: () => void;
 }
@@ -75,7 +75,8 @@ export const SearchSongModal: React.FC<SearchSongModalProps> = ({ setCurrentText
                             const res = await searchSong.mutateAsync({ api_path: song.api_path });
                             if(res.song) {
                               const songScript = res.song.lyrics;
-                              setCurrentText(songScript, (res?.song?.id.toString() ?? ""));
+                              const songName = res.song.name;
+                              setCurrentText(songScript, (res?.song?.id.toString() ?? ""), songName);
                               toggleModal();
                             }  
                           }

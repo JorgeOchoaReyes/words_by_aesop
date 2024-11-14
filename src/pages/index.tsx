@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import { useToast } from "~/hooks/use-toast";
 import { AnimatedLoading } from "~/components/Loading/AnimatedLoading";
+import { Checkbox } from "~/components/ui/checkbox";
 
 export default function Home() {  
   const [currentText, setCurrentText] = React.useState<string>(""); 
@@ -96,7 +97,8 @@ export default function Home() {
     });
     return wordsRecords;    
   };
-  const processText = async (text: string) => {
+
+  const processText = (text: string) => {
     setLoading(true);
     const res = processPhonemes(text, dictionary); 
     if(res.words) {
@@ -125,7 +127,10 @@ export default function Home() {
       setPhonoticParagraph(res.words);
     } 
     const lastWord = text.split(" ").filter((a) => a.trim() !== "").pop();  
-    if(lastWord) {
+    if(
+      lastWord 
+      && store.allowFindWordsThatRhyme
+    ) {
       const rhymes = findWordsThatRhyme(lastWord, dictionary);
       setRhymingWords(rhymes); 
     }
@@ -136,11 +141,7 @@ export default function Home() {
     const paragraphs = storedParagraphs; 
     if(paragraphs && paragraphs.length > 0) {
       setCurrentText(paragraphs);
-      processText(paragraphs).then(() => { 
-        console.log("Processed text");
-      }).catch((err) => {
-        console.error(err);
-      });
+      processText(paragraphs); 
     }
   }, [storedParagraphs]);
 
@@ -156,8 +157,10 @@ export default function Home() {
           const res = await searchSong.mutateAsync({ api_path: "/songs/" + (query.geniusId as string) });
           if(res.song) {
             const songScript = res.song.lyrics;
+            const songName = res.song.name; 
+            store.setSongName(songName);
             setCurrentText(cleanText(songScript, false, false, false));
-            await processText(cleanText(songScript, false, false, false));
+            processText(cleanText(songScript, false, false, false));
             store.saveParagraphs(cleanText(songScript, false, false, false));
             setGeniusSongId(query.geniusId as string);
           } else {
@@ -233,8 +236,12 @@ export default function Home() {
               <AnimatedLoading />
               :
               <>
-                <div className="flex md:justify-between xs:justify-center w-full xs:flex-col md:flex-row"> 
-                  <h2 ref={h2Ref} className="md:text-2xl xs:text-xl mb-5 underline md:self-start text-center"> Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> </h2> 
+                <div className="flex md:justify-between xs:justify-center w-full xs:flex-col md:flex-row pl-3"> 
+                  <h2 ref={h2Ref} className="md:text-2xl xs:text-xl mb-5 underline md:self-start"> 
+                    Total Words: <b> {Object.values(uniqueWords).reduce((acc, curr) => acc + curr, 0)}</b> Unique Words: <b> {Object.keys(uniqueWords).length}</b> 
+                    <br />    <br /> 
+                    <span className="text-start"> {store.songName && <b> Song: {store.songName}</b>} </span>
+                  </h2> 
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -277,9 +284,10 @@ export default function Home() {
                     setTextValue={async (e) => {   
                       if(e.endsWith(" ") || e.endsWith("\n")) {
                         setCurrentText(cleanText(e, false, false, false));  
-                        await processText(cleanText(e, false, false, false));
+                        processText(cleanText(e, false, false, false));
                         return;
                       }   
+                      store.clearSongName();
                       store.saveParagraphs(cleanText(e, false, false, false));
                       setCurrentText(cleanText(e, false, false, false));  
                     }} 
@@ -302,16 +310,34 @@ export default function Home() {
                       borderRadius: 10,  
                       display: "flex",
                       flexDirection: "column",  
-                    }}> 
-                    <RecommendText
-                      rhymingWords={rhymingWords}
-                      cleanText={cleanText}
-                      currentText={currentText}
-                      setCurrentText={setCurrentText}
-                      processText={processText}
-                      showAllRhyming={showAllRhyming}
-                      setShowAllRhyming={setShowAllRhyming}
-                    />
+                    }}>  
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        checked={store.allowFindWordsThatRhyme}
+                        onCheckedChange={() => {
+                          store.setAllowFindWordsThatRhyme(!store.allowFindWordsThatRhyme);
+                        }}
+                        id="rhymes-checkbox"
+                      />
+                      <label
+                        htmlFor="rhymes-checkbox"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Allow Find Words That Rhyme {"(Beta, may slow down performance)"}
+                      </label>
+                    </div>
+                    {
+                      store.allowFindWordsThatRhyme &&  
+                      <RecommendText
+                        rhymingWords={rhymingWords}
+                        cleanText={cleanText}
+                        currentText={currentText}
+                        setCurrentText={setCurrentText}
+                        processText={processText}
+                        showAllRhyming={showAllRhyming}
+                        setShowAllRhyming={setShowAllRhyming}
+                      />
+                    } 
                   </div>
                   <div 
                     className="xs:w-full md:w-[70%]"
@@ -330,10 +356,11 @@ export default function Home() {
           } 
         </div>
         <SearchSongModal 
-          setCurrentText={async (text: string, id: string) => {
+          setCurrentText={async (text: string, id: string, songName) => {
             setCurrentText(cleanText(text, false, false, false));  
-            await processText(cleanText(text, false, false, false)); 
+            processText(cleanText(text, false, false, false)); 
             store.saveParagraphs(cleanText(text, false, false, false));
+            store.setSongName(songName);
             setGeniusSongId(id);
           }}
           isOpen={geniusModal}

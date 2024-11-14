@@ -11,7 +11,7 @@ export const RecommendText: React.FC<{
     cleanText: (text: string, removePunctuation: boolean, removeNumbers: boolean, removeExtraSpaces: boolean) => string;
     currentText: string;
     setCurrentText: (text: string) => void;
-    processText: (text: string) => Promise<void>;
+    processText: (text: string) => void;
     showAllRhyming: {
         highlyRhyming: boolean;
         rhyming: boolean;
@@ -86,7 +86,7 @@ export const RecommendText: React.FC<{
                               key={word} onClick={async () => {
                                 const newText = cleanText(`${currentText} ${word}`, false, false, false); 
                                 setCurrentText(cleanText(newText, false, false, false));  
-                                await processText(cleanText(newText, false, false, false));
+                                processText(cleanText(newText, false, false, false));
                               }} className="text-md mx-2 underline cursor-pointer"> {word}, </motion.a>
                           );
                         })
