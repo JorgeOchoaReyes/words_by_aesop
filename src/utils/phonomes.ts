@@ -76,18 +76,15 @@ export const findWordsThatRhyme = (word: string, dictionary: Record<string, stri
     const maxLengthHIghlyRhyming = 10;
     const maxLengthRhyming = 15;
     const maxLengthSomewhatRhyming = 20;
-    if(matchingPhonemes === 4
-    && highlyRhyming.length < maxLengthHIghlyRhyming
+    if(matchingPhonemes === 4 && highlyRhyming.length < maxLengthHIghlyRhyming
     ) {
       highlyRhyming.push(dictWord);
     }
-    else if(matchingPhonemes === 3 
-    && rhyming.length < maxLengthRhyming
+    else if(matchingPhonemes === 3 && rhyming.length < maxLengthRhyming
     ) {
       rhyming.push(dictWord);
     }
-    else if(matchingPhonemes === 2 
-    && somewhatRhyming.length < maxLengthSomewhatRhyming
+    else if(matchingPhonemes === 2 && somewhatRhyming.length < maxLengthSomewhatRhyming
     ) {
       somewhatRhyming.push(dictWord);
     } 
