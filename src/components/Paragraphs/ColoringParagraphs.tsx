@@ -72,8 +72,7 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
             const textColor = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? ""));
             return <span key={phonotic+index} style={{
               backgroundColor: phonoticsAsMatchingColors[phonotic], 
-              color: textColor,
-              marginLeft: 3,
+              color: textColor, 
             }}>{phonotic}</span>;
           });  
           if(!paragraphs[paragraphIndex]) {
@@ -91,7 +90,7 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
               transition={{ duration: 0.5 }}
               key={index+word} className="flex flex-col mx-2">
               <div key={word} className={`text-lg text-center underline ${textWordSize}`}> {word}  </div>   
-              <div className={`text-md ${textPhonoticsSize} text-center ml-1`}> {colorPhontics}</div>
+              <div className={`text-md ${textPhonoticsSize} text-center `}> {colorPhontics}</div>
             </motion.div>
           ); 
         }).flat(); 
