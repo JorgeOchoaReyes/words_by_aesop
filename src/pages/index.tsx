@@ -96,8 +96,7 @@ export default function Home() {
       wordsRecords[word] = wordsRecords[word] + 1;
     });
     return wordsRecords;    
-  };
-
+  }; 
   const processText = (text: string) => {
     setLoading(true);
     const res = processPhonemes(text, dictionary); 
@@ -143,11 +142,10 @@ export default function Home() {
       setCurrentText(paragraphs);
       processText(paragraphs); 
     }
-  }, [storedParagraphs]);
+  }, [storedParagraphs]); 
 
   const router = useRouter(); 
-  const query = router.query; 
-
+  const query = router.query;  
   const searchSong = api.geniusRouter.getSong.useMutation(); 
 
   useEffect(() => {
@@ -253,26 +251,26 @@ export default function Home() {
                       }}
                     >
                       <GeniusLogo />
-              Find Lyrics 
+                      Find Lyrics 
                     </Button>
                     {
                       geniusSongId && 
-                <Button className="btn bg-black hover:bg-grey mr-3 w-[100%] mb-10 text-white active:scale-75 transition-all text-lg"
-                  onClick={()=> {
-                    const geniusId = (process.env.NODE_ENV === "production" ? "https://www.wordsbyaesop.com?geniusId=" : "http://localhost:3000?geniusId=") + geniusSongId;
-                    if(navigator.clipboard) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                      ((navigator?.clipboard as any))?.writeText(geniusId);
-                      toast.toast({
-                        title: "Copied",
-                        description: "Link copied to clipboard", 
-                      });
-                    }
-                  }}
-                > 
-                  <ShareIcon size={24} className="mr-4" />
-              Share Lyrics 
-                </Button>
+                      <Button className="btn bg-black hover:bg-grey mr-3 w-[100%] mb-10 text-white active:scale-75 transition-all text-lg"
+                        onClick={()=> {
+                          const geniusId = (process.env.NODE_ENV === "production" ? "https://www.wordsbyaesop.com?geniusId=" : "http://localhost:3000?geniusId=") + geniusSongId;
+                          if(navigator.clipboard) {
+                          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                            ((navigator?.clipboard as any))?.writeText(geniusId);
+                            toast.toast({
+                              title: "Copied",
+                              description: "Link copied to clipboard", 
+                            });
+                          }
+                        }}
+                      > 
+                        <ShareIcon size={24} className="mr-4" />
+                        Share Lyrics 
+                      </Button>
                     }
                   </motion.div>
                 </div>
@@ -330,11 +328,11 @@ export default function Home() {
                       store.allowFindWordsThatRhyme &&  
                       <RecommendText
                         rhymingWords={rhymingWords}
-                        cleanText={cleanText}
                         currentText={currentText}
+                        showAllRhyming={showAllRhyming}
+                        cleanText={cleanText}
                         setCurrentText={setCurrentText}
                         processText={processText}
-                        showAllRhyming={showAllRhyming}
                         setShowAllRhyming={setShowAllRhyming}
                       />
                     } 
@@ -345,7 +343,8 @@ export default function Home() {
                       borderRadius: 10,  
                       display: "flex",  
                       justifyContent: "space-evenly",
-                    }}>       
+                    }}
+                  >       
                     <MetricsParagraphs 
                       phonoticsCount={phonoticsCount}
                       uniqueWords={uniqueWords}
