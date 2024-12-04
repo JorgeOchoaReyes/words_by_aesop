@@ -110,7 +110,8 @@ export const TypingGame: React.FC<TypingGameProps> = ({
             if(!startGame) {
               setStartGame(true);
             }
-            const val = e.target.value; 
+            let val = e.target.value; 
+            val = val.replace(/[^a-zA-Z]/g, "").toLowerCase();
             setUserInput(val);
             setUserInputPhonemes(dictionary[val] ?? "");
           }}
