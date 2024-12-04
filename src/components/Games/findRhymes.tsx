@@ -124,6 +124,7 @@ export const TypingGame: React.FC<TypingGameProps> = ({
               const isWordInDictionary = dictionary[userInput];
               if(!isWordInDictionary) {
                 alert("Word not found in dictionary! Try again!");
+                return; 
               } 
               const scoreWord = scoreChosenWord(userInput, text.word, dictionary);
               setAccuracy(accuracy + scoreWord.score); 
@@ -169,8 +170,9 @@ export const TypingGame: React.FC<TypingGameProps> = ({
       <CardContent className="space-y-4">
         <div className="text-sm sm:text-lg font-medium bg-muted p-2 sm:p-4 rounded-md overflow-x-auto whitespace-nowrap"> Previous: </div>  
         {
-          historyOfWords.reverse().map((history, index) => (
-            <>
+          historyOfWords.reverse().map((history, index) => {
+            const scoreForWord = scoreChosenWord(history.userWord, history.word, dictionary);
+            return <>
               <div key={index} className="flex flex-col sm:flex-row justify-between lg:items-center sm:items-start space-y-2 sm:space-y-0">
                 <div className="text-xs sm:text-sm">
                   <span className="font-bold">Word:</span> {history.word} <br />
@@ -196,11 +198,15 @@ export const TypingGame: React.FC<TypingGameProps> = ({
                     }}> {phoneme} </span>;
                   })}
                 </div>
-                <div className="text-xs sm:text-sm">Score: {scoreChosenWord(history.userWord, history.word, dictionary).score}</div>
+                <div className="text-xs sm:text-sm" style={{ 
+                  padding: 5,
+                  borderRadius: "10px",
+                  fontWeight: "bold",
+                }}>Score: {scoreForWord.score}</div>
               </div>
               <hr className="w-full" />
-            </>
-          ))
+            </>;
+          })
         }
       </CardContent>
     </Card>
