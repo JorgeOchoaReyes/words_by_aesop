@@ -14,6 +14,7 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
   currentText,
   phonoticParagraph, 
   phonoticsAsMatchingColors,
+  phonoticsCount,
   checkIfColorIsDark,
 }) => {
   const [isHovered, setIsHovered] = React.useState<Record<number, boolean>>({});
@@ -69,10 +70,12 @@ export const ColorPraragraphs: React.FC<ParagraphsColorProps> = ({
           word = word.replace(/[^0-9A-Za-z']/g, "").toLowerCase();
           const phonotics = phonoticParagraph[word]; 
           const colorPhontics = phonotics?.split(" ").map((phonotic, index) => { 
+            const isNew = (phonoticsCount[phonotic] && phonoticsCount[phonotic] > 1) ? false : true; 
             const textColor = (checkIfColorIsDark(phonoticsAsMatchingColors[phonotic] ?? ""));
+
             return <span key={phonotic+index} style={{
-              backgroundColor: phonoticsAsMatchingColors[phonotic], 
-              color: textColor, 
+              backgroundColor: isNew ? "" : phonoticsAsMatchingColors[phonotic], 
+              color: isNew ? "black" : textColor, 
             }}>{phonotic}</span>;
           });  
           if(!paragraphs[paragraphIndex]) {
