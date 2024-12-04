@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react"; 
 import { Button } from "../ui/button";
+import { Gamepad } from "lucide-react";
+import { Home } from "lucide-react";
+import Link from "next/link";
 
 export const Footer: React.FC = () => {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear()); 
@@ -12,6 +15,16 @@ export const Footer: React.FC = () => {
             <p className="text-gray-600">© {currentYear} NZQR. All rights reserved.</p>
           </div>
           <div className="flex space-x-4">
+            <Button variant="ghost" size="icon">
+              <Link href="/" style={{cursor: "pointer"}} > 
+                <Home size={32} />
+              </Link>
+            </Button> 
+            <Button variant="ghost" size="icon">
+              <Link href="/game" style={{cursor: "pointer"}} > 
+                <Gamepad size={32} />
+              </Link>
+            </Button> 
             <Button variant="ghost" size="icon">
               <a href="https://github.com/JorgeOchoaReyes" target="_blank" style={{cursor: "pointer"}} > 
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" className="bi bi-github" viewBox="0 0 16 16">

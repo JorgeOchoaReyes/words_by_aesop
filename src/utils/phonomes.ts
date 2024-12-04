@@ -103,3 +103,166 @@ export const syllableCount = (phones: string): number => {
   const syllableCount = countSyllables(phones);
   return syllableCount;
 };
+
+export const cleanText = (text: string, skipLines=true, skipSpecialChars=true, skipDoubleSpaes=true): string => {
+  let newText = text;
+  if(skipLines) {
+    newText = newText.replaceAll("\n", " ");
+  }
+  if(skipSpecialChars) {
+    newText = newText.replaceAll("\t", " ");
+  }
+  if(skipDoubleSpaes) {
+    newText = newText.replaceAll("  ", " ");
+  }
+  return newText;
+};
+
+export const checkIfColorIsDark = (hex: string): string => {
+  const r = parseInt(hex.substring(1, 3), 16);
+  const g = parseInt(hex.substring(3, 5), 16);
+  const b = parseInt(hex.substring(5, 7), 16); 
+  const luminance = 0.299 * r + 0.587 * g + 0.114 * b; 
+  return luminance > 128 ? "#000000" : "#FFFFFF";   
+};  
+
+export const countOfPhonotics = (phonotics: Record<string, string>, text: string): Record<string, number> => {
+  const counts = {} as Record<string, number>;
+  (text).replaceAll("\n"," <br/> ").split(" ").forEach((word) => { 
+    if(word === "<br />" || word === "<br/>" || word === " ") {
+      return;
+    }
+    const phonoticsRecord = phonotics[word];
+    const splitPhonotic = phonoticsRecord?.split(" ");
+    splitPhonotic?.forEach((phonotic) => {
+      if(!counts[phonotic]) {
+        counts[phonotic] = 0;
+      }
+      counts[phonotic] = counts[phonotic] + 1;
+    });
+  });  
+  return counts;
+};
+
+export const uniqueWordsCount = (text: string): Record<string, number> => {  
+  const words = text.replaceAll("\n", " ").split(" ").filter((word) => word.trim() !== ""); 
+  const wordsRecords = {} as Record<string, number>;
+  words.forEach((word) => {
+    if(!wordsRecords[word]) {
+      wordsRecords[word] = 0;
+    }
+    wordsRecords[word] = wordsRecords[word] + 1;
+  });
+  return wordsRecords;    
+}; 
+
+export const getRandomWord = (dictionary: Record<string, string>, useWords: Record<string, boolean>): {
+  word: string;
+  phonemes: string;
+} => {
+  const randomWord = _.sample(Object.keys(dictionary));
+  if (!randomWord) {
+    throw new Error("No random word found");
+  }
+  if (useWords[randomWord]) {
+    return getRandomWord(dictionary, useWords);
+  } 
+  const cleanWordFromSpecialChars = randomWord.replace(/[^0-9A-Za-z']/g, "").toLowerCase();
+  return {
+    word: cleanWordFromSpecialChars,
+    phonemes: dictionary[randomWord] ?? "",
+  };
+};
+
+export const scoreChosenWord = (chosenWord: string, targetWord: string, dictionary: Record<string, string>): {score: number, level: number} => { 
+  let score = 0;
+  let level = 0; 
+  const chosenWordPhonemes = dictionary[chosenWord];
+  const targetWordPhonemes = dictionary[targetWord];
+  if (!chosenWordPhonemes || !targetWordPhonemes) {
+    alert("No phonemes found for chosenWord or targetWord");
+    return {
+      score: 0,
+      level: 0,
+    };
+  }
+  const chosenWordPhonemesArray = chosenWordPhonemes.split(" ");
+  const targetWordPhonemesArray = targetWordPhonemes.split(" ");
+  
+  //find any matching phonemes
+  for(const phoneme of chosenWordPhonemesArray) {
+    if(targetWordPhonemesArray.includes(phoneme)) {
+      score++;
+    }
+  }
+  
+  if(score <= 0) {
+    level = 0;
+  } else if(score === 1) {
+    level = 1;
+  } else if(score === 2) {
+    level = 2;
+  } else if(score === 3) {
+    level = 3;
+  } else if(score === 4) {
+    level = 4;   
+  } else {
+    level = 5;
+  }
+
+  return {
+    score: score, 
+    level: level
+  }; 
+};
+
+const singleCharColors: Record<string, string> = {};
+
+function generateDistinctColor(): string {
+  const hue = Math.floor(Math.random() * 360);
+  const saturation = 70 + Math.floor(Math.random() * 30); // 70-100%
+  const lightness = 35 + Math.floor(Math.random() * 30);  // 35-65%
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+
+export function generateColorFromString(str: string): string { 
+  if (str.length === 1) {
+    const char = str.toLowerCase();
+    if (!singleCharColors[char]) {
+      let newColor;
+      do {
+        newColor = generateDistinctColor();
+      } while (Object.values(singleCharColors).includes(newColor));
+      singleCharColors[char] = newColor;
+    }
+    return singleCharColors[char];
+  }
+
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  
+  const hue = hash % 360;
+  const saturation = 70 + (hash % 30); // 70-100%
+  const lightness = 35 + (hash % 30);  // 35-65%
+  
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+}
+
+export function hslToHex(h: number, s: number, l: number): string {
+  l /= 100;
+  const a = s * Math.min(l, 1 - l) / 100;
+  const f = (n: number) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color).toString(16).padStart(2, "0");
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+export function isColorDark(r: number, g: number, b: number): boolean {
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+  return brightness < 128;
+}
+

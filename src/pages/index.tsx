@@ -20,6 +20,7 @@ import { api } from "~/utils/api";
 import { useToast } from "~/hooks/use-toast";
 import { AnimatedLoading } from "~/components/Loading/AnimatedLoading";
 import { Checkbox } from "~/components/ui/checkbox";
+import { uniqueWordsCount, countOfPhonotics, cleanText, checkIfColorIsDark } from "~/utils/phonomes";
 
 export default function Home() {  
   const [currentText, setCurrentText] = React.useState<string>(""); 
@@ -47,56 +48,8 @@ export default function Home() {
     highlyRhyming: false,
     rhyming: false,
     somewhatRhyming: false,
-  });
+  }); 
 
-  const cleanText = (text: string, skipLines=true, skipSpecialChars=true, skipDoubleSpaes=true): string => {
-    let newText = text;
-    if(skipLines) {
-      newText = newText.replaceAll("\n", " ");
-    }
-    if(skipSpecialChars) {
-      newText = newText.replaceAll("\t", " ");
-    }
-    if(skipDoubleSpaes) {
-      newText = newText.replaceAll("  ", " ");
-    }
-    return newText;
-  };
-  const checkIfColorIsDark = (hex: string): string => {
-    const r = parseInt(hex.substring(1, 3), 16);
-    const g = parseInt(hex.substring(3, 5), 16);
-    const b = parseInt(hex.substring(5, 7), 16); 
-    const luminance = 0.299 * r + 0.587 * g + 0.114 * b; 
-    return luminance > 128 ? "#000000" : "#FFFFFF";   
-  };  
-  const countOfPhonotics = (phonotics: Record<string, string>, text: string): Record<string, number> => {
-    const counts = {} as Record<string, number>;
-    (text).replaceAll("\n"," <br/> ").split(" ").forEach((word) => { 
-      if(word === "<br />" || word === "<br/>" || word === " ") {
-        return;
-      }
-      const phonoticsRecord = phonotics[word];
-      const splitPhonotic = phonoticsRecord?.split(" ");
-      splitPhonotic?.forEach((phonotic) => {
-        if(!counts[phonotic]) {
-          counts[phonotic] = 0;
-        }
-        counts[phonotic] = counts[phonotic] + 1;
-      });
-    });  
-    return counts;
-  };
-  const uniqueWordsCount = (text: string): Record<string, number> => {  
-    const words = text.replaceAll("\n", " ").split(" ").filter((word) => word.trim() !== ""); 
-    const wordsRecords = {} as Record<string, number>;
-    words.forEach((word) => {
-      if(!wordsRecords[word]) {
-        wordsRecords[word] = 0;
-      }
-      wordsRecords[word] = wordsRecords[word] + 1;
-    });
-    return wordsRecords;    
-  }; 
   const processText = (text: string) => {
     setLoading(true);
     const res = processPhonemes(text, dictionary); 
