@@ -187,14 +187,12 @@ export const scoreChosenWord = (chosenWord: string, targetWord: string, dictiona
   }
   const chosenWordPhonemesArray = chosenWordPhonemes.split(" ");
   const targetWordPhonemesArray = targetWordPhonemes.split(" ");
-  
-  //find any matching phonemes
+   
   for(const phoneme of chosenWordPhonemesArray) {
     if(targetWordPhonemesArray.includes(phoneme)) {
       score++;
     }
-  }
-  
+  } 
   if(score <= 0) {
     level = 0;
   } else if(score === 1) {
@@ -219,8 +217,8 @@ const singleCharColors: Record<string, string> = {};
 
 function generateDistinctColor(): string {
   const hue = Math.floor(Math.random() * 360);
-  const saturation = 70 + Math.floor(Math.random() * 30); // 70-100%
-  const lightness = 35 + Math.floor(Math.random() * 30);  // 35-65%
+  const saturation = 70 + Math.floor(Math.random() * 30); 
+  const lightness = 35 + Math.floor(Math.random() * 30); 
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
@@ -243,8 +241,8 @@ export function generateColorFromString(str: string): string {
   }
   
   const hue = hash % 360;
-  const saturation = 70 + (hash % 30); // 70-100%
-  const lightness = 35 + (hash % 30);  // 35-65%
+  const saturation = 70 + (hash % 30);  
+  const lightness = 35 + (hash % 30);   
   
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }

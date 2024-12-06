@@ -7,6 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { getRandomWord, checkIfColorIsDark, generateColorFromString, scoreChosenWord } from "~/utils/phonomes";
 import { dictionary } from "cmu-pronouncing-dictionary";  
 import { ToggleGroup, ToggleGroupItem, } from "../ui/toggle-group";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
+import { HelpCircleIcon } from "lucide-react";
 
 interface TypingGameProps {
   startCelebration: () => void;
@@ -57,12 +60,28 @@ export const TypingGame: React.FC<TypingGameProps> = ({
     }
   };
 
+  
+  const gameHelper = driver({ 
+    showProgress: true,
+    steps: [
+      { popover: { title: "Hello There!", description: "This rhyme game is inspired by the rapper Aesop Rock and uses the CMU Pronouncing Dictionary.", side: "right", align: "start" }},
+      { element: "#text-time", popover: { title: "Select time", description: "Select duration of the game.", side: "right", align: "start" }}, 
+      { element: "#text-word-given", popover: { title: "Words to rhyme against", description: "Here, the words that you need to rhyme with will be shown.", side: "right", align: "start" }}, 
+      { element: "#text-input", popover: { title: "Start Game", description: "To start the game just start typing here!", side: "right", align: "start" }}, 
+      { element: "#text-output-phonome", popover: { title: "Finding words that rhyme", description: "As you type, we will check for the phonomes of the words and display them here.", side: "right", align: "start" }}, 
+      { element: "#text-input", popover: { title: "Next Word", description: "Once you are done typing click 'enter' on your keyboard and it will automatically select the next word!", side: "right", align: "start" }}, 
+      { element: "#text-history", popover: { title: "History", description: "As you guess more words we will track all your previous words and score them.", side: "right", align: "start" }}, 
+      { element: "#text-score", popover: { title: "History", description: "Once you are done we add up your score! Share it and see if you can beat your own score! :)", side: "right", align: "start" }}, 
+      { popover: { title: "That's it!", description: "This where the fun begins! :)", side: "right", align: "start" }},
+    ]  
+  });
+
   return (
     <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-xl sm:text-2xl font-bold text-center"> Find Rhymes </CardTitle>
+      <CardHeader className="flex flex-row justify-center">
+        <CardTitle className="text-xl sm:text-2xl font-bold text-center mr-2"> Find Rhymes </CardTitle> <HelpCircleIcon className="cursor-pointer" onClick={() => gameHelper.drive()} />
       </CardHeader> 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4" id="text-time">
         <ToggleGroup type="single">
           <ToggleGroupItem value="10" aria-label="Toggle bold" onClick={() => {
             setCountDown(10);
@@ -82,7 +101,7 @@ export const TypingGame: React.FC<TypingGameProps> = ({
         </ToggleGroup>
       </CardContent>
       <CardContent className="space-y-4">
-        <div className="text-sm sm:text-lg font-medium bg-muted p-2 sm:p-4 rounded-md overflow-x-auto whitespace-nowrap">
+        <div className="text-sm sm:text-lg font-medium bg-muted p-2 sm:p-4 rounded-md overflow-x-auto whitespace-nowrap" id="text-word-given">
           {text?.word?.split("").map((char, index) => (
             <span
               key={index} 
@@ -103,6 +122,7 @@ export const TypingGame: React.FC<TypingGameProps> = ({
         <Input
           ref={inputRef}
           type="text"
+          id="text-input"
           disabled={gameEnded}
           value={userInput}
           onChange={(e) => {
@@ -148,7 +168,7 @@ export const TypingGame: React.FC<TypingGameProps> = ({
           className="text-sm sm:text-lg"
           autoFocus
         />
-        <div className="text-xs sm:text-sm">
+        <div className="text-xs sm:text-sm" id="text-output-phonome">
           {userInputPhonemes.split(" ").map((phoneme, index) => { 
             const backgroundColorUsingPhoneme = generateColorFromString(phoneme);
             const textColor = checkIfColorIsDark(backgroundColorUsingPhoneme);
@@ -163,15 +183,15 @@ export const TypingGame: React.FC<TypingGameProps> = ({
         <div className="text-xs sm:text-sm">
           Time: {countDown} seconds
         </div>
-        <div className="text-xs sm:text-sm">Score: {accuracy} <br /> Total Words: {historyOfWords.length} </div>
+        <div className="text-xs sm:text-sm" id="text-score">Score: {accuracy} <br /> Total Words: {historyOfWords.length} </div>
         <Button onClick={resetGame} className="w-full sm:w-auto">Reset</Button>
       </CardContent>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4" id="text-history">
         <div className="text-sm sm:text-lg font-medium bg-muted p-2 sm:p-4 rounded-md overflow-x-auto whitespace-nowrap"> Previous: </div>  
         {
           historyOfWords.sort((a, b) => {
-            return scoreChosenWord(a.userWord, a.word, dictionary).score - scoreChosenWord(b.userWord, b.word, dictionary).score;
+            return scoreChosenWord(b.userWord, b.word, dictionary).score - scoreChosenWord(a.userWord, a.word, dictionary).score;
           }).map((history, index) => {
             const scoreForWord = scoreChosenWord(history.userWord, history.word, dictionary);
             return <>
