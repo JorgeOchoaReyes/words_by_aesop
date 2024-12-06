@@ -179,8 +179,7 @@ export const scoreChosenWord = (chosenWord: string, targetWord: string, dictiona
   let level = 0; 
   const chosenWordPhonemes = dictionary[chosenWord];
   const targetWordPhonemes = dictionary[targetWord];
-  if (!chosenWordPhonemes || !targetWordPhonemes) {
-    alert("No phonemes found for chosenWord or targetWord");
+  if (!chosenWordPhonemes || !targetWordPhonemes) { 
     return {
       score: 0,
       level: 0,

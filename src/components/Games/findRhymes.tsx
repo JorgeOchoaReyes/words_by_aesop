@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "..//ui/button";
 import { Input } from "..//ui/input";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { getRandomWord, checkIfColorIsDark, generateColorFromString, scoreChosenWord } from "~/utils/phonomes";
 import { dictionary } from "cmu-pronouncing-dictionary";  
 import { ToggleGroup, ToggleGroupItem, } from "../ui/toggle-group";
@@ -170,7 +170,9 @@ export const TypingGame: React.FC<TypingGameProps> = ({
       <CardContent className="space-y-4">
         <div className="text-sm sm:text-lg font-medium bg-muted p-2 sm:p-4 rounded-md overflow-x-auto whitespace-nowrap"> Previous: </div>  
         {
-          historyOfWords.reverse().map((history, index) => {
+          historyOfWords.sort((a, b) => {
+            return scoreChosenWord(a.userWord, a.word, dictionary).score - scoreChosenWord(b.userWord, b.word, dictionary).score;
+          }).map((history, index) => {
             const scoreForWord = scoreChosenWord(history.userWord, history.word, dictionary);
             return <>
               <div key={index} className="flex flex-col sm:flex-row justify-between lg:items-center sm:items-start space-y-2 sm:space-y-0">
