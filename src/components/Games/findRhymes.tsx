@@ -72,7 +72,7 @@ export const TypingGame: React.FC<TypingGameProps> = ({
       { element: "#text-input", popover: { title: "Next Word", description: "Once you are done typing click 'enter' on your keyboard and it will automatically select the next word!", side: "right", align: "start" }}, 
       { element: "#text-history", popover: { title: "History", description: "As you guess more words we will track all your previous words and score them.", side: "right", align: "start" }}, 
       { element: "#text-score", popover: { title: "History", description: "Once you are done we add up your score! Share it and see if you can beat your own score! :)", side: "right", align: "start" }}, 
-      { popover: { title: "That's it!", description: "This where the fun begins! :)", side: "right", align: "start" }},
+      { popover: { title: "That's it!", description: "This is where the fun begins! :)", side: "right", align: "start" }},
     ]  
   });
 

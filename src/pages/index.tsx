@@ -21,6 +21,7 @@ import { useToast } from "~/hooks/use-toast";
 import { AnimatedLoading } from "~/components/Loading/AnimatedLoading";
 import { Checkbox } from "~/components/ui/checkbox";
 import { uniqueWordsCount, countOfPhonotics, cleanText, checkIfColorIsDark } from "~/utils/phonomes";
+import { GradientButton } from "~/components/Button/GradientButton";
 
 export default function Home() {  
   const [currentText, setCurrentText] = React.useState<string>(""); 
@@ -253,6 +254,9 @@ export default function Home() {
                     />
                   </div>
                 </div>   
+                <div className="bg-white flex sm:self-center md:self-end">
+                  <GradientButton text="Test your rhyming skills!" linkTo="/game" />
+                </div> 
                 <div className="w-full md:h-96 xs:w-full flex flex-row mb-5 mt-10 xs:flex-col md:flex-row">
                   <div 
                     className="xs:mb-10"
