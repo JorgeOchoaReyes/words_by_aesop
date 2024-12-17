@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { api } from "~/utils/api"; 
 import { TypingGame } from "~/components/Games/findRhymes"; 
 import dynamic from "next/dynamic"; 
+import { GradientButton } from "~/components/Button/GradientButton";
 
 // Dynamically import react-confetti to avoid SSR issues
 const ReactConfetti = dynamic(() => import("react-confetti"), { ssr: false });
@@ -82,9 +83,12 @@ export default function Home() {
             /> 
           Words by Aesop
           </h1>
-          <FancyMetronome />
+          <FancyMetronome /> 
         </div>   
         <TypingGame startCelebration={startCelebration} /> 
+        <div className="bg-white flex sm:self-center mt-10">
+          <GradientButton text="Analyze song lyrics!" linkTo="/" />
+        </div> 
         {isConfettiActive && (
           <ReactConfetti
             width={dimensions.width}
