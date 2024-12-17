@@ -92,6 +92,7 @@ export const geniusRouter = createTRPCRouter({
             const fetchUrl = url[1] ?? ""; 
             const cleanUrl = "https:" + fetchUrl;
             try {
+              console.log(cleanUrl);
               const res = await fetch(cleanUrl);  
               const embedContent = await res.text(); 
               const json = (embedContent?.split("JSON.parse(")?.[1]?.split("))"));  
@@ -128,6 +129,7 @@ export const geniusRouter = createTRPCRouter({
               lyrics = cleanText; 
             } catch (error) {
               console.log(error);
+              lyrics = "Lyrics not found";
             } 
           }         
         }  
