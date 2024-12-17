@@ -94,7 +94,9 @@ export const geniusRouter = createTRPCRouter({
             try {
               console.log(cleanUrl);
               const res = await fetch(cleanUrl);  
+              console.log(res.status); 
               const embedContent = await res.text(); 
+              console.log(embedContent);
               const json = (embedContent?.split("JSON.parse(")?.[1]?.split("))"));  
               const html = parse(json?.[0] ?? ""); 
               const innerText = html.innerText;  
