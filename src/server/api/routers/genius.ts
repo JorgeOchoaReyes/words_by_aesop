@@ -68,8 +68,7 @@ export const geniusRouter = createTRPCRouter({
           headers: {
             "Authorization": `Bearer ${access_token}`,
           },
-        });
-        
+        }); 
         const data = (await response.json()) as {
             meta: Record<string, unknown>,
             response: {
@@ -92,42 +91,46 @@ export const geniusRouter = createTRPCRouter({
           if(url) {
             const fetchUrl = url[1] ?? ""; 
             const cleanUrl = "https:" + fetchUrl;
-            const res = await fetch(cleanUrl);  
-            const embedContent = await res.text(); 
-            const json = (embedContent?.split("JSON.parse(")?.[1]?.split("))"));  
-            const html = parse(json?.[0] ?? ""); 
-            const innerText = html.innerText;  
-            const clean1 = innerText.replaceAll("\\n", "\n").replaceAll("\\", "").replaceAll("\"","") 
-              .replace(/<\/?[a-z][\s\S]*?>/gi,"") 
-              .split("\n");
-            clean1.shift();
-            clean1.pop();
-            const cleanText = clean1.filter((line) => line.trim() !== "")
-              .filter((line) => !line.includes("More on Genius"))
-              .filter((line) => !line.includes("Embed"))
-              .filter((line) => !line.includes("Lyrics"))
-              .filter((line) => !line.includes("[Verse"))  
-              .filter((line) => !line.includes("[Chorus"))
-              .filter((line) => !line.includes("[Pre-Chorus"))
-              .filter((line) => !line.includes("[Bridge"))
-              .filter((line) => !line.includes("[Outro"))
-              .filter((line) => !line.includes("[Intro"))
-              .filter((line) => !line.includes("[Hook"))
-              .filter((line) => !line.includes("Powered by Genius"))
-              .filter((line) => !line.includes("Lyrics for this song have yet to be released. Please check back once the song has been released."))
-              .filter((line) => !line.includes("[Produced by"))
-              .filter((line) => !line.includes("[Part"))
-              .filter((line) => !line.includes("[Refrain"))
-              .filter((line) => !line.includes("[Instrumental"))
-              .filter((line) => !line.includes("[Guitar"))
-              .filter((line) => !line.includes("[Piano"))
-              .filter((line) => !line.includes("[Post-Chorus"))
-              .filter((line) => !line.includes("[Outro"))
-              .filter((line) => !line.includes("[Video"))
-              .join("\n");
-            lyrics = cleanText; 
+            try {
+              const res = await fetch(cleanUrl);  
+              const embedContent = await res.text(); 
+              const json = (embedContent?.split("JSON.parse(")?.[1]?.split("))"));  
+              const html = parse(json?.[0] ?? ""); 
+              const innerText = html.innerText;  
+              const clean1 = innerText.replaceAll("\\n", "\n").replaceAll("\\", "").replaceAll("\"","") 
+                .replace(/<\/?[a-z][\s\S]*?>/gi,"") 
+                .split("\n");
+              clean1.shift();
+              clean1.pop();
+              const cleanText = clean1.filter((line) => line.trim() !== "")
+                .filter((line) => !line.includes("More on Genius"))
+                .filter((line) => !line.includes("Embed"))
+                .filter((line) => !line.includes("Lyrics"))
+                .filter((line) => !line.includes("[Verse"))  
+                .filter((line) => !line.includes("[Chorus"))
+                .filter((line) => !line.includes("[Pre-Chorus"))
+                .filter((line) => !line.includes("[Bridge"))
+                .filter((line) => !line.includes("[Outro"))
+                .filter((line) => !line.includes("[Intro"))
+                .filter((line) => !line.includes("[Hook"))
+                .filter((line) => !line.includes("Powered by Genius"))
+                .filter((line) => !line.includes("Lyrics for this song have yet to be released. Please check back once the song has been released."))
+                .filter((line) => !line.includes("[Produced by"))
+                .filter((line) => !line.includes("[Part"))
+                .filter((line) => !line.includes("[Refrain"))
+                .filter((line) => !line.includes("[Instrumental"))
+                .filter((line) => !line.includes("[Guitar"))
+                .filter((line) => !line.includes("[Piano"))
+                .filter((line) => !line.includes("[Post-Chorus"))
+                .filter((line) => !line.includes("[Outro"))
+                .filter((line) => !line.includes("[Video"))
+                .join("\n");
+              lyrics = cleanText; 
+            } catch (error) {
+              console.log(error);
+            } 
           }         
-        } 
+        }  
         return {
           song: {
             id: data.response.song.id,
@@ -137,7 +140,7 @@ export const geniusRouter = createTRPCRouter({
           },
         };
       } catch (error) {
-        console.error(error);
+        console.log(error);
         return {};
       }
     }),
