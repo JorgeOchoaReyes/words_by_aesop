@@ -3,9 +3,7 @@ import {
   createTRPCRouter, 
   publicProcedure,
 } from "~/server/api/trpc";
-import { type GeniusSongReference, type GeniusHit } from "~/schema"; 
-import {parse} from "node-html-parser"; 
-
+import { type GeniusSongReference, type GeniusHit } from "~/schema";  
 const geniusBaseUrl = "https://api.genius.com";
 const ovhApiUrl = "https://api.lyrics.ovh";
 
@@ -90,11 +88,19 @@ export const geniusRouter = createTRPCRouter({
         let lyrics = "";
  
         if(lyrics === "" && data?.response?.song?.primary_artist?.name && data?.response?.song?.title) { 
-          const url = `${ovhApiUrl}/v1/${data?.response?.song.primary_artist.name}/${data?.response?.song.title}`;
-          const response = await fetch(url);
-          const res = await response.json() as { lyrics: string }; 
-          lyrics = res.lyrics ?? "Lyrics not found";
-          lyrics = (res.lyrics || "").replaceAll("\n\n", "\n").replaceAll("\\", "").replaceAll("\"","");
+          // console.log("artist: ", data?.response?.song?.primary_artist?.name);
+          // console.log("title: ", data?.response?.song?.title); 
+          try{
+            const url = `${ovhApiUrl}/v1/${data?.response?.song.primary_artist.name}/${data?.response?.song.title}`;
+            const response = await fetch(url);
+            const res = await response.json() as { lyrics: string }; 
+            // console.log(res);
+            lyrics = res.lyrics ?? "Lyrics not found";
+            lyrics = (res.lyrics || "").replaceAll("\n\n", "\n").replaceAll("\\", "").replaceAll("\"","");
+          } catch (err) {
+            console.log(err); 
+            lyrics = "Lyrics not found"; 
+          }
         } else {
           lyrics = "Lyrics not found";
         }
