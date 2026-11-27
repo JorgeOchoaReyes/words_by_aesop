@@ -47,7 +47,9 @@ def check(wav: np.ndarray, text: str, sample_rate: int, cfg: FilterConfig) -> st
     return None
 
 
-def filter_dataset(data_dir: Path, out_name: str = "metadata.filtered.jsonl", cfg: FilterConfig | None = None) -> Counter:
+def filter_dataset(
+    data_dir: Path, out_name: str = "metadata.filtered.jsonl", cfg: FilterConfig | None = None
+) -> Counter:
     import soundfile as sf
 
     cfg = cfg or FilterConfig()

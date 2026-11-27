@@ -108,4 +108,3 @@ def slice_recordings(
                 meta.write(json.dumps(record) + "\n")
                 n += 1
     return n
-
