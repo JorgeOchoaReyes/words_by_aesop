@@ -12,10 +12,10 @@ build/
 *.wav
 *.mp3
 *.flac
-data/
-checkpoints/
-voices/
-eval_out/
-wandb/
+/data/
+/checkpoints/
+/voices/
+/eval_out/
+/wandb/
 
 .env
