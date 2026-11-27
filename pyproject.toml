@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "voicebox"
+name = "aesop"
 version = "0.1.0"
 description = "Human-like TTS built on an Orpheus-style speech language model: data prep, LoRA fine-tuning, streaming server, evaluation."
 readme = "README.md"
@@ -26,14 +26,14 @@ serve = ["fastapi>=0.110", "uvicorn[standard]", "python-multipart"]
 train = ["peft>=0.12", "datasets>=2.20"]
 data = ["faster-whisper>=1.0"]
 eval = ["faster-whisper>=1.0", "jiwer", "speechbrain>=1.0"]
-all = ["voicebox[serve,train,data,eval]"]
+all = ["aesop[serve,train,data,eval]"]
 dev = ["pytest", "httpx", "ruff"]
 
 [project.scripts]
-voicebox = "voicebox.cli:app"
+aesop = "aesop.cli:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/voicebox"]
+packages = ["src/aesop"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

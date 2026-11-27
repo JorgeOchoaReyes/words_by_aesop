@@ -8,8 +8,8 @@ pytest.importorskip("fastapi")
 
 from fastapi.testclient import TestClient  # noqa: E402
 
-from voicebox import server  # noqa: E402
-from voicebox.engine import VoiceLibrary  # noqa: E402
+from aesop import server  # noqa: E402
+from aesop.engine import VoiceLibrary  # noqa: E402
 
 
 class FakeEngine:
@@ -29,8 +29,8 @@ class FakeEngine:
 @pytest.fixture
 def client(monkeypatch, tmp_path):
     monkeypatch.setattr(server, "TTSEngine", FakeEngine)
-    monkeypatch.setenv("VOICEBOX_VOICES", str(tmp_path))
-    monkeypatch.delenv("VOICEBOX_API_KEY", raising=False)
+    monkeypatch.setenv("AESOP_VOICES", str(tmp_path))
+    monkeypatch.delenv("AESOP_API_KEY", raising=False)
     with TestClient(server.app) as c:
         yield c
 
@@ -67,7 +67,7 @@ def test_validation(client):
 
 
 def test_api_key(client, monkeypatch):
-    monkeypatch.setenv("VOICEBOX_API_KEY", "s3cret")
+    monkeypatch.setenv("AESOP_API_KEY", "s3cret")
     assert client.post("/v1/tts", json={"text": "hi"}).status_code == 401
     ok = client.post("/v1/tts", json={"text": "hi"}, headers={"Authorization": "Bearer s3cret"})
     assert ok.status_code == 200
@@ -79,7 +79,7 @@ def test_voices_list(client):
 
 
 def test_voice_name_validation(tmp_path):
-    from voicebox.engine import Voice
+    from aesop.engine import Voice
 
     with pytest.raises(ValueError):
         VoiceLibrary(tmp_path).add(Voice("../evil", "t", []))

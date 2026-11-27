@@ -1,4 +1,4 @@
-"""Command line entry point: ``voicebox --help``."""
+"""Command line entry point: ``aesop --help``."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ data_app = typer.Typer(help="Build a training dataset from raw recordings.", no_
 app.add_typer(data_app, name="data")
 
 MODEL = typer.Option(None, help="Base model id or path. Default: the adapter's base, else Orpheus 3B finetuned.")
-ADAPTER = typer.Option(None, help="LoRA adapter directory from `voicebox train`.")
+ADAPTER = typer.Option(None, help="LoRA adapter directory from `aesop train`.")
 VOICES = typer.Option(Path("voices"), help="Directory of saved cloning voices.")
 
 
@@ -67,11 +67,11 @@ def serve(
     import uvicorn
 
     if model:
-        os.environ["VOICEBOX_MODEL"] = model
-    os.environ["VOICEBOX_VOICES"] = str(voices)
+        os.environ["AESOP_MODEL"] = model
+    os.environ["AESOP_VOICES"] = str(voices)
     if adapter:
-        os.environ["VOICEBOX_ADAPTER"] = adapter
-    uvicorn.run("voicebox.server:app", host=host, port=port)
+        os.environ["AESOP_ADAPTER"] = adapter
+    uvicorn.run("aesop.server:app", host=host, port=port)
 
 
 @data_app.command("slice")

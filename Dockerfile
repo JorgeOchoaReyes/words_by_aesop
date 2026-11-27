@@ -7,9 +7,9 @@ COPY pyproject.toml README.md ./
 COPY src ./src
 RUN pip install --no-cache-dir ".[serve,train]"
 
-ENV VOICEBOX_VOICES=/app/voices \
+ENV AESOP_VOICES=/app/voices \
     HF_HOME=/app/.cache/huggingface
 VOLUME ["/app/voices", "/app/.cache/huggingface"]
 EXPOSE 8000
 
-CMD ["uvicorn", "voicebox.server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "aesop.server:app", "--host", "0.0.0.0", "--port", "8000"]

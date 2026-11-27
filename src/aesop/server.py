@@ -1,12 +1,12 @@
 """FastAPI server.
 
-Run with ``voicebox serve`` or ``uvicorn voicebox.server:app``. Configured by
+Run with ``aesop serve`` or ``uvicorn aesop.server:app``. Configured by
 environment variables:
 
-    VOICEBOX_MODEL     base model id or path (default: the adapter's base, else Orpheus 3B finetuned)
-    VOICEBOX_ADAPTER   optional LoRA adapter directory from ``voicebox train``
-    VOICEBOX_VOICES    directory for saved cloning voices (default: ./voices)
-    VOICEBOX_API_KEY   if set, requests must send ``Authorization: Bearer <key>``
+    AESOP_MODEL     base model id or path (default: the adapter's base, else Orpheus 3B finetuned)
+    AESOP_ADAPTER   optional LoRA adapter directory from ``aesop train``
+    AESOP_VOICES    directory for saved cloning voices (default: ./voices)
+    AESOP_API_KEY   if set, requests must send ``Authorization: Bearer <key>``
 """
 
 from __future__ import annotations
@@ -39,14 +39,14 @@ _gpu_lock = threading.Lock()
 async def lifespan(_: FastAPI):
     global _engine
     _engine = TTSEngine(
-        model_id=os.environ.get("VOICEBOX_MODEL") or None,
-        adapter=os.environ.get("VOICEBOX_ADAPTER") or None,
-        voices_dir=os.environ.get("VOICEBOX_VOICES", "voices"),
+        model_id=os.environ.get("AESOP_MODEL") or None,
+        adapter=os.environ.get("AESOP_ADAPTER") or None,
+        voices_dir=os.environ.get("AESOP_VOICES", "voices"),
     )
     yield
 
 
-app = FastAPI(title="voicebox", lifespan=lifespan)
+app = FastAPI(title="aesop", lifespan=lifespan)
 
 
 def engine() -> TTSEngine:
@@ -56,7 +56,7 @@ def engine() -> TTSEngine:
 
 
 def check_key(authorization: str | None = Header(default=None)) -> None:
-    key = os.environ.get("VOICEBOX_API_KEY")
+    key = os.environ.get("AESOP_API_KEY")
     if key and authorization != f"Bearer {key}":
         raise HTTPException(401, "invalid or missing API key")
 

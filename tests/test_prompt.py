@@ -1,5 +1,5 @@
-from voicebox import tokens as T
-from voicebox.prompt import Reference, extract_audio_tokens, format_text, inference_prompt, training_example
+from aesop import tokens as T
+from aesop.prompt import Reference, extract_audio_tokens, format_text, inference_prompt, training_example
 
 
 def fake_encode(s: str) -> list[int]:

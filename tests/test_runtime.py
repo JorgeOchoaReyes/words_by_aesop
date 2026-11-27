@@ -5,9 +5,9 @@ import pytest
 
 torch = pytest.importorskip("torch")
 
-from voicebox import codec  # noqa: E402
-from voicebox import tokens as T  # noqa: E402
-from voicebox.model import AudioSlotConstraint  # noqa: E402
+from aesop import codec  # noqa: E402
+from aesop import tokens as T  # noqa: E402
+from aesop.model import AudioSlotConstraint  # noqa: E402
 
 
 class FakeSNAC(torch.nn.Module):

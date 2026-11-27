@@ -1,8 +1,8 @@
 import numpy as np
 
-from voicebox.data.filter import FilterConfig, check
-from voicebox.data.slice import Segment, merge_segments
-from voicebox.engine import split_text
+from aesop.data.filter import FilterConfig, check
+from aesop.data.slice import Segment, merge_segments
+from aesop.engine import split_text
 
 
 def test_split_text_groups_sentences():

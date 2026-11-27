@@ -2,7 +2,7 @@ import random
 
 import pytest
 
-from voicebox import tokens as T
+from aesop import tokens as T
 
 
 def random_codes(n, seed=0):

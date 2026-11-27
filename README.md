@@ -1,4 +1,4 @@
-# voicebox
+# Aesop
 
 A human-like text-to-speech stack that uses the same recipe as current commercial TTS
 (Fish Audio, ElevenLabs, Sesame, and others) at a scale one person can run:
@@ -37,7 +37,7 @@ the license on the model page and run `huggingface-cli login` first.
 ## 1. Try it
 
 ```bash
-voicebox say "Hey! <laugh> I can't believe that actually worked." -o hello.wav --voice tara
+aesop say "Hey! <laugh> I can't believe that actually worked." -o hello.wav --voice tara
 ```
 
 - **Built-in voices** (from `orpheus-3b-0.1-ft`): `tara leah jess leo dan mia zac zoe`.
@@ -46,8 +46,8 @@ voicebox say "Hey! <laugh> I can't believe that actually worked." -o hello.wav -
 ## 2. Clone a voice from a short clip (no training)
 
 ```bash
-voicebox add-voice narrator sample.wav "The exact words spoken in sample.wav."
-voicebox say "Anything you like." --voice narrator --model canopylabs/orpheus-3b-0.1-pretrained -o out.wav
+aesop add-voice narrator sample.wav "The exact words spoken in sample.wav."
+aesop say "Anything you like." --voice narrator --model canopylabs/orpheus-3b-0.1-pretrained -o out.wav
 ```
 
 - Use 5–20 s of clean, single-speaker audio and its exact transcript.
@@ -58,19 +58,19 @@ voicebox say "Anything you like." --voice narrator --model canopylabs/orpheus-3b
 
 ```bash
 # Long recordings in raw/  ->  transcribed 3-15 s clips
-voicebox data slice raw/ data/narrator --speaker narrator
+aesop data slice raw/ data/narrator --speaker narrator
 
 # Drop silent, clipped, mis-cut clips; peak-normalise the rest
-voicebox data filter data/narrator
+aesop data filter data/narrator
 
 # SNAC-encode and build training sequences
-voicebox data tokenize data/narrator data/tokenized
+aesop data tokenize data/narrator data/tokenized
 
 # LoRA fine-tune (edit configs/finetune_lora.yaml first)
-voicebox train configs/finetune_lora.yaml
+aesop train configs/finetune_lora.yaml
 
 # Use it: the speaker name you sliced with is the voice name
-voicebox say "Testing my new voice." --voice narrator --adapter checkpoints/my-voice/final -o test.wav
+aesop say "Testing my new voice." --voice narrator --adapter checkpoints/my-voice/final -o test.wav
 ```
 
 **How much data:**
@@ -87,7 +87,7 @@ step catches the worst problems, but listen to a random sample of clips before t
 ## 4. Evaluate
 
 ```bash
-voicebox eval narrator --adapter checkpoints/my-voice/final \
+aesop eval narrator --adapter checkpoints/my-voice/final \
   --reference data/narrator/wavs/narrator_take1_00003.wav --reference data/narrator/wavs/narrator_take1_00042.wav
 ```
 
@@ -102,9 +102,9 @@ Compare checkpoints with these, but judge "human-ness" by listening and by blind
 ## 5. Serve
 
 ```bash
-voicebox serve --port 8000                                   # built-in voices
-voicebox serve --adapter checkpoints/my-voice/final          # your fine-tune
-VOICEBOX_API_KEY=secret voicebox serve                        # require a bearer token
+aesop serve --port 8000                                   # built-in voices
+aesop serve --adapter checkpoints/my-voice/final          # your fine-tune
+AESOP_API_KEY=secret aesop serve                        # require a bearer token
 ```
 
 | Method | Path | Body | Returns |
@@ -126,8 +126,8 @@ then feed the `Int16` chunks into an `AudioWorklet` at 24 kHz.
 ### Docker / GPU hosting
 
 ```bash
-docker build -t voicebox .
-docker run --gpus all -p 8000:8000 -e HF_TOKEN=... -v $PWD/voices:/app/voices voicebox
+docker build -t aesop .
+docker run --gpus all -p 8000:8000 -e HF_TOKEN=... -v $PWD/voices:/app/voices aesop
 ```
 
 GPU hosts that work well:
@@ -141,7 +141,7 @@ web front end and call this API.
 
 ## How it works
 
-`src/voicebox/`:
+`src/aesop/`:
 
 | File | Role |
 |------|------|
