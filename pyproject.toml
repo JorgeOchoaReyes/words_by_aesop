@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "voicebox"
+version = "0.1.0"
+description = "Human-like TTS built on an Orpheus-style speech language model: data prep, LoRA fine-tuning, streaming server, evaluation."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "torch>=2.3",
+    "transformers>=4.46",
+    "accelerate>=0.34",
+    "snac>=1.2",
+    "numpy",
+    "librosa>=0.10",
+    "soundfile",
+    "typer>=0.12",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+serve = ["fastapi>=0.110", "uvicorn[standard]", "python-multipart"]
+train = ["peft>=0.12", "datasets>=2.20"]
+data = ["faster-whisper>=1.0"]
+eval = ["faster-whisper>=1.0", "jiwer", "speechbrain>=1.0"]
+all = ["voicebox[serve,train,data,eval]"]
+dev = ["pytest", "httpx", "ruff"]
+
+[project.scripts]
+voicebox = "voicebox.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/voicebox"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+line-length = 120
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+# typer/FastAPI declare params via calls in defaults by design
+ignore = ["B008"]

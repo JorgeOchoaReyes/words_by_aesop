@@ -1,0 +1,7 @@
+.git
+data
+checkpoints
+voices
+eval_out
+**/__pycache__
+*.wav

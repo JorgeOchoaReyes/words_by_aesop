@@ -1,0 +1,24 @@
+# LoRA fine-tune for one new voice. Fits on a single 24 GB GPU (RTX 4090 / A10G / L4)
+# with batch_size 1 + gradient checkpointing. On an 80 GB A100/H100, raise batch_size
+# to 8 and drop grad_accum to 1.
+base_model: canopylabs/orpheus-3b-0.1-pretrained
+dataset: data/tokenized
+output_dir: checkpoints/my-voice
+eval_fraction: 0.02
+
+lora_r: 64
+lora_alpha: 64
+lora_dropout: 0.0
+
+# ~1-10 hours of clean audio. With < 1 hour, drop epochs to 1-2 to avoid overfitting.
+epochs: 3
+learning_rate: 2.0e-4
+batch_size: 1
+grad_accum: 8
+warmup_ratio: 0.03
+max_length: 4096
+bf16: true
+gradient_checkpointing: true
+logging_steps: 10
+save_steps: 500
+report_to: none   # or "wandb"
